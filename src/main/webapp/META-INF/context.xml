@@ -1,0 +1,8 @@
+<Context path="/gtfs" docBase="gtfs" reloadable="false" swallowOutput="true">
+
+	<ResourceLink
+		name="jdbc/gtfs"
+		global="jdbc/gtfs"
+		type="javax.sql.DataSource" />
+
+</Context>
