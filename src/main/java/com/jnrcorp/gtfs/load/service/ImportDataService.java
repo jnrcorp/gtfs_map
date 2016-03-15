@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import com.jnrcorp.gtfs.dao.hibernate.BaseObjectDAO;
+import com.jnrcorp.gtfs.dao.hibernate.GTFSRemovalDAO;
 import com.jnrcorp.gtfs.dao.model.DAOBaseObject;
 import com.jnrcorp.gtfs.exception.GenericIOException;
 import com.jnrcorp.gtfs.exception.ImportHeaderException;
@@ -44,6 +45,14 @@ public class ImportDataService {
 	@Autowired
 	@Qualifier("baseObjectDAO")
 	private BaseObjectDAO baseObjectDAO;
+
+	@Autowired
+	@Qualifier("gtfsRemovalDAO")
+	private GTFSRemovalDAO gtfsRemovalDAO;
+
+	public void removeAgencyData(String agencyId) {
+		
+	}
 
 	public <T extends DAOBaseObject> void loadData(Class<T> theClass, File theFile) {
 		List<T> objectsToRemove = baseObjectDAO.getAll(theClass);
@@ -75,7 +84,7 @@ public class ImportDataService {
 			if (objectValues.containsKey(columnHeaderName)) {
 				GTFSRowImport.FieldSetter<DAOBaseObject> fieldSetter = (GTFSRowImport.FieldSetter<DAOBaseObject>) fieldsByColumnHeader.get(columnHeaderName);
 				String consumerFieldValue = objectValues.get(columnHeaderName);
-				fieldSetter.setValue(object, consumerFieldValue);
+				fieldSetter.setValue(object, consumerFieldValue, baseObjectDAO);
 			}
 		}
 	}
