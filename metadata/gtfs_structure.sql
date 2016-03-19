@@ -183,24 +183,20 @@ CREATE TABLE `trips` (
 DROP TABLE IF EXISTS `travel_times`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `gtfs`.`travel_times` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `from_stop_id` INT(11) NOT NULL,
-  `to_stop_id` INT(11) NOT NULL,
-  `travel_time_minutes` INT(11) NOT NULL,
+CREATE TABLE `travel_times` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `route_id` int(11) NOT NULL,
+  `from_stop_id` int(11) NOT NULL,
+  `to_stop_id` int(11) NOT NULL,
+  `travel_time_minutes` int(11) NOT NULL,
+  `total_trips` int(11) NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `from_stop_id_fk_idx` (`from_stop_id` ASC),
-  INDEX `to_stop_id_fk_idx` (`to_stop_id` ASC),
-  CONSTRAINT `from_stop_id_fk`
-    FOREIGN KEY (`from_stop_id`)
-    REFERENCES `gtfs`.`stops` (`stop_id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `to_stop_id_fk`
-    FOREIGN KEY (`to_stop_id`)
-    REFERENCES `gtfs`.`stops` (`stop_id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION
+  KEY `from_stop_id_fk_idx` (`from_stop_id`),
+  KEY `to_stop_id_fk_idx` (`to_stop_id`),
+  KEY `route_id_fk_idx` (`route_id`),
+  CONSTRAINT `tt_from_stop_id_fk` FOREIGN KEY (`from_stop_id`) REFERENCES `stops` (`stop_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `tt_route_id_fk` FOREIGN KEY (`route_id`) REFERENCES `routes` (`route_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `tt_to_stop_id_fk` FOREIGN KEY (`to_stop_id`) REFERENCES `stops` (`stop_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

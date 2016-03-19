@@ -20,6 +20,9 @@ public class TravelTime extends DAOBaseObject implements Serializable {
 	@Column(name="id")
 	private Long id;
 
+	@Column(name="route_id")
+	private Integer routeId;
+
 	@Column(name="from_stop_id")
 	private Integer fromStopId;
 
@@ -28,6 +31,9 @@ public class TravelTime extends DAOBaseObject implements Serializable {
 
 	@Column(name="travel_time_minutes")
 	private BigInteger travelTimeMinutes;
+
+	@Column(name="total_trips")
+	private BigInteger totalTrips;
 
 	public TravelTime() {
 		super();
@@ -41,6 +47,14 @@ public class TravelTime extends DAOBaseObject implements Serializable {
 	@Override
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Integer getRouteId() {
+		return routeId;
+	}
+
+	public void setRouteId(Integer routeId) {
+		this.routeId = routeId;
 	}
 
 	public Integer getFromStopId() {
@@ -65,6 +79,14 @@ public class TravelTime extends DAOBaseObject implements Serializable {
 
 	public void setTravelTimeMinutes(BigInteger travelTimeMinutes) {
 		this.travelTimeMinutes = travelTimeMinutes;
+	}
+
+	public BigInteger getTotalTrips() {
+		return totalTrips;
+	}
+
+	public void setTotalTrips(BigInteger totalTrips) {
+		this.totalTrips = totalTrips;
 	}
 
 }
