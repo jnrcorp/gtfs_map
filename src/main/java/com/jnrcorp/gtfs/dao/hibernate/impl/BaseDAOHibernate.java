@@ -1,6 +1,8 @@
 package com.jnrcorp.gtfs.dao.hibernate.impl;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -161,13 +163,16 @@ public class BaseDAOHibernate implements BaseObjectDAO {
 	@Override
 	public void saveOrUpdateAll(Collection<? extends DAOBaseObject> entities) {
 		int i = 0;
+		BigDecimal totalCount = new BigDecimal(entities.size());
+		BigDecimal oneHundred = new BigDecimal(100);
 		for (Object object : entities) {
 			saveOrUpdate(object);
 			if (i % 1000 == 0) { // 20, same as the JDBC batch size
 				// flush a batch of inserts and release memory:
 				getSession().flush();
 				getSession().clear();
-				double percentComplete = (double) (i / entities.size()) * 100;
+				BigDecimal currentCount = new BigDecimal(i);
+				BigDecimal percentComplete = currentCount.divide(totalCount, 4, RoundingMode.HALF_UP).multiply(oneHundred).setScale(2);
 				LOGGER.info("Flushing at " + i + ". " +  percentComplete + "%");
 			}
 			++i;

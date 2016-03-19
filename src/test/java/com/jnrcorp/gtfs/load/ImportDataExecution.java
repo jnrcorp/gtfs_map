@@ -3,17 +3,15 @@ package com.jnrcorp.gtfs.load;
 import java.io.File;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jnrcorp.gtfs.BaseJunitTest;
 import com.jnrcorp.gtfs.dao.model.Agency;
 import com.jnrcorp.gtfs.dao.model.CalendarDate;
 import com.jnrcorp.gtfs.dao.model.Route;
@@ -23,14 +21,7 @@ import com.jnrcorp.gtfs.dao.model.StopTime;
 import com.jnrcorp.gtfs.dao.model.Trip;
 import com.jnrcorp.gtfs.load.service.ImportDataService;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {
-		"classpath:applicationContext-resources.xml",
-		"classpath:applicationContext-hibernate.xml",
-		"classpath:applicationContext-services.xml",
-})
-@Transactional
-public class ImportDataExecution {
+public class ImportDataExecution extends BaseJunitTest {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ImportDataExecution.class);
 

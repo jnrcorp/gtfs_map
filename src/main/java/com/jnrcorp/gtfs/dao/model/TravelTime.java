@@ -1,0 +1,70 @@
+package com.jnrcorp.gtfs.dao.model;
+
+import java.io.Serializable;
+import java.math.BigInteger;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name="travel_times")
+public class TravelTime extends DAOBaseObject implements Serializable {
+
+	private static final long serialVersionUID = -8578420745865450340L;
+
+	@Id
+	@GeneratedValue
+	@Column(name="id")
+	private Long id;
+
+	@Column(name="from_stop_id")
+	private Integer fromStopId;
+
+	@Column(name="to_stop_id")
+	private Integer toStopId;
+
+	@Column(name="travel_time_minutes")
+	private BigInteger travelTimeMinutes;
+
+	public TravelTime() {
+		super();
+	}
+
+	@Override
+	public Long getId() {
+		return id;
+	}
+
+	@Override
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Integer getFromStopId() {
+		return fromStopId;
+	}
+
+	public void setFromStopId(Integer fromStopId) {
+		this.fromStopId = fromStopId;
+	}
+
+	public Integer getToStopId() {
+		return toStopId;
+	}
+
+	public void setToStopId(Integer toStopId) {
+		this.toStopId = toStopId;
+	}
+
+	public BigInteger getTravelTimeMinutes() {
+		return travelTimeMinutes;
+	}
+
+	public void setTravelTimeMinutes(BigInteger travelTimeMinutes) {
+		this.travelTimeMinutes = travelTimeMinutes;
+	}
+
+}
