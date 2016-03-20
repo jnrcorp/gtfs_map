@@ -186,6 +186,7 @@ DROP TABLE IF EXISTS `travel_times`;
 CREATE TABLE `travel_times` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `route_id` int(11) NOT NULL,
+  `direction_id` int(11) NOT NULL,
   `from_stop_id` int(11) NOT NULL,
   `to_stop_id` int(11) NOT NULL,
   `travel_time_minutes` int(11) NOT NULL,

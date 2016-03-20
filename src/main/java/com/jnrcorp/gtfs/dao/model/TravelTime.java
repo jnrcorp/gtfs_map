@@ -23,6 +23,9 @@ public class TravelTime extends DAOBaseObject implements Serializable {
 	@Column(name="route_id")
 	private Integer routeId;
 
+	@Column(name="direction_id")
+	private Integer directionId;
+
 	@Column(name="from_stop_id")
 	private Integer fromStopId;
 
@@ -55,6 +58,14 @@ public class TravelTime extends DAOBaseObject implements Serializable {
 
 	public void setRouteId(Integer routeId) {
 		this.routeId = routeId;
+	}
+
+	public Integer getDirectionId() {
+		return directionId;
+	}
+
+	public void setDirectionId(Integer directionId) {
+		this.directionId = directionId;
 	}
 
 	public Integer getFromStopId() {

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Simple Map</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      var map;
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 40.7959475, lng: -74.1160387},
+          zoom: 12
+        });
+      }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZjdWvOyA2Cbk4YW28JI9Ak__2tX4jwdE&callback=initMap" async defer></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.2.min.js"></script>
+    <script type="text/javascript">
+    	jQuery(document).ready(function() {
+    		jQuery.get("http://localhost:8080/gtfs/travelTimes?maxTravelTime=60", function(data) {
+    			jQuery.each(data.travelTimes, function(index, value) {
+    				var myLatLng = {lat: value.stopLatitude, lng: value.stopLongitude};
+    				var title = value.agencyId + ": " + value.routeName + " - " + value.stopName + "[" + value.travelTimeMinutes + "] - " + value.totalTripCount + " trips";
+    				var marker = new google.maps.Marker({
+						position: myLatLng,
+						map: map,
+						title: title
+					});
+    			});
+    		});
+    	});
+    </script>
+  </body>
+</html>

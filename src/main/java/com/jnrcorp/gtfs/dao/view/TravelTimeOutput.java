@@ -7,11 +7,12 @@ public class TravelTimeOutput implements Serializable {
 	private static final long serialVersionUID = 2048057319758658665L;
 
 	private Integer travelTimeMinutes;
-	private Integer totalTripCOunt;
+	private Integer totalTripCount;
 	private String stopName;
 	private Double stopLatitude;
 	private Double stopLongitude;
 	private String routeName;
+	private Integer directionId;
 	private String agencyId;
 
 	public TravelTimeOutput() {
@@ -26,12 +27,12 @@ public class TravelTimeOutput implements Serializable {
 		this.travelTimeMinutes = travelTimeMinutes;
 	}
 
-	public Integer getTotalTripCOunt() {
-		return totalTripCOunt;
+	public Integer getTotalTripCount() {
+		return totalTripCount;
 	}
 
-	public void setTotalTripCOunt(Integer totalTripCOunt) {
-		this.totalTripCOunt = totalTripCOunt;
+	public void setTotalTripCount(Integer totalTripCount) {
+		this.totalTripCount = totalTripCount;
 	}
 
 	public String getStopName() {
@@ -64,6 +65,14 @@ public class TravelTimeOutput implements Serializable {
 
 	public void setRouteName(String routeName) {
 		this.routeName = routeName;
+	}
+
+	public Integer getDirectionId() {
+		return directionId;
+	}
+
+	public void setDirectionId(Integer directionId) {
+		this.directionId = directionId;
 	}
 
 	public String getAgencyId() {

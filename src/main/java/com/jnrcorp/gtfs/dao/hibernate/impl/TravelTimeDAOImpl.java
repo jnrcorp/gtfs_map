@@ -27,6 +27,7 @@ public class TravelTimeDAOImpl extends BaseDAOHibernate implements TravelTimeDAO
 		sql.append(" 	CEIL(AVG(ABS(TIME_TO_SEC(st.arrival_time) - TIME_TO_SEC(st_pabt.arrival_time)) / 60)) as travelTimeMinutes, ");
 		sql.append(" 	COUNT(st.stop_id) as totalTrips, ");
 		sql.append(" 	t.route_id as routeId, ");
+		sql.append(" 	t.direction_id as directionId, ");
 		sql.append(" 	st.stop_id as fromStopId, ");
 		sql.append(" 	st_pabt.stop_id as toStopId ");
 		sql.append(" FROM stop_times st ");
@@ -34,7 +35,7 @@ public class TravelTimeDAOImpl extends BaseDAOHibernate implements TravelTimeDAO
 		sql.append(" JOIN trips t ON st.trip_id = t.trip_id ");
 		sql.append(" JOIN stop_times st_pabt ON st.trip_id = st_pabt.trip_id AND st_pabt.stop_id IN (:pabtStopIds) AND st_pabt.pickup_type = 0 ");
 		sql.append(" WHERE st.stop_id NOT IN (:pabtStopIds) AND st.pickup_type = 0 ");
-		sql.append(" GROUP BY t.route_id, st.stop_id, st_pabt.stop_id ");
+		sql.append(" GROUP BY t.route_id, t.direction_id, st.stop_id, st_pabt.stop_id ");
 
 		SQLQuery query = createSQLQuery(sql.toString());
 		query.setParameterList("pabtStopIds", pabtStopIds);
@@ -50,7 +51,8 @@ public class TravelTimeDAOImpl extends BaseDAOHibernate implements TravelTimeDAO
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT ");
 		sql.append(" 	tt.travel_time_minutes as travelTimeMinutes, ");
-		sql.append(" 	tt.total_trips as totalTripCOunt, ");
+		sql.append(" 	tt.total_trips as totalTripCount, ");
+		sql.append(" 	tt.direction_id as directionId, ");
 		sql.append(" 	s.stop_name as stopName, ");
 		sql.append(" 	s.stop_lat as stopLatitude, ");
 		sql.append(" 	s.stop_lon as stopLongitude, ");

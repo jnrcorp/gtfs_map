@@ -10,20 +10,14 @@
                            http://www.springframework.org/schema/beans/spring-beans.xsd
                            http://www.springframework.org/schema/context 
                            http://www.springframework.org/schema/context/spring-context.xsd
-                           http://www.springframework.org/schema/integration
-                           http://www.springframework.org/schema/integration/spring-integration.xsd
                            http://www.springframework.org/schema/tx
                            http://www.springframework.org/schema/tx/spring-tx.xsd
                            http://www.springframework.org/schema/aop 
-						   http://www.springframework.org/schema/aop/spring-aop.xsd
-                           http://www.springframework.org/schema/task 
-                           http://www.springframework.org/schema/task/spring-task.xsd">
+						   http://www.springframework.org/schema/aop/spring-aop.xsd">
 
 	<tx:annotation-driven />
 
-	<aop:aspectj-autoproxy />
-
-	<context:component-scan base-package="com.jnrcorp.gtfs.service.impl" />
+	<context:component-scan base-package="com.jnrcorp.gtfs.load.service" />
 	<context:component-scan base-package="com.jnrcorp.gtfs.dao.hibernate.impl" />
 
 	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">

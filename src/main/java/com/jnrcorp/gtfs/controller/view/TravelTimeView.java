@@ -1,4 +1,4 @@
-package com.jnrcorp.gtfs.controller;
+package com.jnrcorp.gtfs.controller.view;
 
 import java.util.List;
 

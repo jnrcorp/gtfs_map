@@ -225,12 +225,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.springframework.mobile</groupId>
-			<artifactId>spring-mobile-device</artifactId>
-			<version>1.1.0.RELEASE</version>
-		</dependency>
-
-		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
 			<version>1.8.6</version>
@@ -257,12 +251,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>opensymphony</groupId>
-			<artifactId>sitemesh</artifactId>
-			<version>2.4.2</version>
-		</dependency>
-
-		<dependency>
 			<groupId>displaytag</groupId>
 			<artifactId>displaytag</artifactId>
 			<version>1.2</version>
@@ -286,6 +274,13 @@
 			<groupId>xerces</groupId>
 			<artifactId>xercesImpl</artifactId>
 			<version>2.11.0</version>
+		</dependency>
+
+		<!-- Jackson JSON Processor -->
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-databind</artifactId>
+		    <version>2.6.2</version>
 		</dependency>
 
 	</dependencies>
