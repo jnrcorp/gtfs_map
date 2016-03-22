@@ -38,6 +38,9 @@ public class TravelTime extends DAOBaseObject implements Serializable {
 	@Column(name="total_trips")
 	private BigInteger totalTrips;
 
+	@Column(name="stop_sequence")
+	private Integer stopSequence;
+
 	public TravelTime() {
 		super();
 	}
@@ -98,6 +101,14 @@ public class TravelTime extends DAOBaseObject implements Serializable {
 
 	public void setTotalTrips(BigInteger totalTrips) {
 		this.totalTrips = totalTrips;
+	}
+
+	public Integer getStopSequence() {
+		return stopSequence;
+	}
+
+	public void setStopSequence(Integer stopSequence) {
+		this.stopSequence = stopSequence;
 	}
 
 }

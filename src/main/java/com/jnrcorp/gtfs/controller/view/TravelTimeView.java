@@ -6,15 +6,28 @@ import com.jnrcorp.gtfs.dao.view.TravelTimeOutput;
 
 public class TravelTimeView {
 
-	List<TravelTimeOutput> travelTimes;
+	private String routeName;
+	private Integer directionId;
+	private List<TravelTimeOutput> travelTimes;
 
 	public TravelTimeView() {
 		super();
 	}
 
-	public TravelTimeView(List<TravelTimeOutput> travelTimes) {
-		super();
-		this.travelTimes = travelTimes;
+	public String getRouteName() {
+		return routeName;
+	}
+
+	public void setRouteName(String routeName) {
+		this.routeName = routeName;
+	}
+
+	public Integer getDirectionId() {
+		return directionId;
+	}
+
+	public void setDirectionId(Integer directionId) {
+		this.directionId = directionId;
 	}
 
 	public List<TravelTimeOutput> getTravelTimes() {

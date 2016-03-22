@@ -30,17 +30,34 @@
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.2.min.js"></script>
     <script type="text/javascript">
     	jQuery(document).ready(function() {
-    		jQuery.get("http://localhost:8080/gtfs/travelTimes?maxTravelTime=60", function(data) {
+    		var hue = 0;
+    		jQuery.get("http://localhost:8080/gtfs/travelTimes?maxTravelTime=20", function(data) {
     			jQuery.each(data, function (index, travelTimeView) {
+    				var flightPlanCoordinates = new Array();
         			jQuery.each(travelTimeView.travelTimes, function(index, value) {
-        				var myLatLng = {lat: value.stopLatitude, lng: value.stopLongitude};
         				var title = value.agencyId + ": " + value.routeName + " - " + value.stopName + "[" + value.travelTimeMinutes + "] - " + value.totalTripCount + " trips";
-        				var marker = new google.maps.Marker({
-    						position: myLatLng,
-    						map: map,
-    						title: title
-    					});
+        				var myLatLng = {lat: value.stopLatitude, lng: value.stopLongitude};
+        				flightPlanCoordinates.push(myLatLng);
         			});
+//     				var marker = new google.maps.Marker({
+// 						position: myLatLng,
+// 						map: map,
+// 						title: title
+// 					});
+					var hueOutput = hue < 10 ? "000" + hue : hue < 100 ? "00" + hue : hue < 1000 ? "0" + hue : hue + "";
+					var color = '#FF' + hueOutput;
+    				var flightPath = new google.maps.Polyline({
+						path: flightPlanCoordinates,
+						geodesic: true,
+						strokeColor: color,
+						strokeOpacity: 1.0,
+						strokeWeight: 4
+					});
+					flightPath.setMap(map);
+					flightPath.addListener('click', function(event) {
+						alert(travelTimeView.routeName + " [" + travelTimeView.directionId + "]" + "\n" + flightPlanCoordinates);
+					});
+					hue += 10;
     			});
     		});
     	});

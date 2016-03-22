@@ -11,6 +11,7 @@ public class TravelTimeOutput implements Serializable {
 	private String stopName;
 	private Double stopLatitude;
 	private Double stopLongitude;
+	private Integer stopSequence;
 	private String routeName;
 	private Integer directionId;
 	private String agencyId;
@@ -57,6 +58,14 @@ public class TravelTimeOutput implements Serializable {
 
 	public void setStopLongitude(Double stopLongitude) {
 		this.stopLongitude = stopLongitude;
+	}
+
+	public Integer getStopSequence() {
+		return stopSequence;
+	}
+
+	public void setStopSequence(Integer stopSequence) {
+		this.stopSequence = stopSequence;
 	}
 
 	public String getRouteName() {

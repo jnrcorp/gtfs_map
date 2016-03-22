@@ -191,6 +191,7 @@ CREATE TABLE `travel_times` (
   `to_stop_id` int(11) NOT NULL,
   `travel_time_minutes` int(11) NOT NULL,
   `total_trips` int(11) NOT NULL,
+  `stop_sequence` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `from_stop_id_fk_idx` (`from_stop_id`),
   KEY `to_stop_id_fk_idx` (`to_stop_id`),
