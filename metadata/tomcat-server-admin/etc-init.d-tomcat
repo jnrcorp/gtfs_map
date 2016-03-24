@@ -9,8 +9,8 @@
 . /etc/init.d/functions
 
 RETVAL=$?
-CATALINA_HOME="/usr/tomcat"
-CATALINA_BASE="/usr/tomcat"
+CATALINA_HOME="/usr/local/tomcat"
+CATALINA_BASE="/usr/local/tomcat_apps"
 JAVA_HOME="/usr/java/latest"
 TOMCAT_USER="tomcat"
 TOMCAT_GROUP="tomcat"
