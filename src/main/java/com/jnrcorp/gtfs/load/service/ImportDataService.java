@@ -50,13 +50,12 @@ public class ImportDataService {
 	@Qualifier("gtfsRemovalDAO")
 	private GTFSRemovalDAO gtfsRemovalDAO;
 
-	public void removeAgencyData(String agencyId) {
-		
+	public <T> void removeData(Class<T> theClass) {
+		List<T> objectsToRemove = baseObjectDAO.getAll(theClass);
+		baseObjectDAO.removeAll(objectsToRemove);
 	}
 
 	public <T extends DAOBaseObject> void loadData(Class<T> theClass, File theFile) {
-		List<T> objectsToRemove = baseObjectDAO.getAll(theClass);
-		baseObjectDAO.removeAll(objectsToRemove);
 		List<T> objectsToSave = createObjects(theClass, theFile);
 		LOGGER.info(theClass.getName() + " : " + objectsToSave.size());
 		baseObjectDAO.saveOrUpdateAll(objectsToSave);
@@ -64,15 +63,10 @@ public class ImportDataService {
 	}
 
 	private <T extends DAOBaseObject> List<T> createObjects(Class<T> theClass, File file) {
-		List<T> results = new ArrayList<>();
+		List<T> results = null;
 		try {
-			List<Map<String, String>> objectForOperation = getObjectsForOperation(file);
-			for (Map<String, String> objectValues : objectForOperation) {
-				T newObject = theClass.newInstance();
-				setFields(newObject, theClass, objectValues);
-				results.add(newObject);
-			}
-		} catch (InstantiationException | IllegalAccessException | IOException e) {
+			results = getObjectsForOperation(theClass, file);
+		} catch (IOException | InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
 		return results;
@@ -89,9 +83,8 @@ public class ImportDataService {
 		}
 	}
 
-	private List<Map<String, String>> getObjectsForOperation(File file) throws IOException {
-
-		List<Map<String, String>> importPatronDetails = new ArrayList<>();
+	private <T extends DAOBaseObject> List<T> getObjectsForOperation(Class<T> theClass, File file) throws IOException, InstantiationException, IllegalAccessException {
+		List<T> results = new ArrayList<>();
 		List<ImportFailure> failures = new ArrayList<>();
 
 		FileInputStream fis = new FileInputStream(file);
@@ -100,10 +93,6 @@ public class ImportDataService {
 		CSVReader reader = new CSVReader(lin, ',', '"');
 		String[] columnNames = reader.readNext();
 
-		if (!".csv".equalsIgnoreCase(FileNameUtil.getFileNameSuffix(file.getName()))) {
-			LOGGER.error("Error before parsing import file: fileName is not csv - fileName=" + columnNames);
-			throw new GenericIOException("Please check that your uploaded file is in CSV (comma-separated values) format. It should have a '.csv' file extension.");
-		}
 		if (columnNames == null) {
 			LOGGER.warn("Patron file format error: file is empty ");
 			throw new ImportHeaderException("Error before parsing import file - Headers are empty: headers=" + columnNames);
@@ -130,7 +119,10 @@ public class ImportDataService {
 				for (int i = 0; i < columnNames.length; i++) {
 					rowValuesByHeaderName.put(columnNames[i], columnsValues[i]);
 				}
-				importPatronDetails.add(rowValuesByHeaderName);
+				T newObject = theClass.newInstance();
+				setFields(newObject, theClass, rowValuesByHeaderName);
+				results.add(newObject);
+
 				LOGGER.debug("Successfully prepped gtfs import: " + StringUtils.join(columnsValues, ';') + "; currentCount=" + currentLineCount);
 			} catch (InvalidInputException iie) {
 				processError(columnsValues, currentLineCount, iie);
@@ -151,7 +143,7 @@ public class ImportDataService {
 		if (!CollectionUtils.isEmpty(failures)) {
 			throw new GenericIOException("There was a parsing error with at least 1 row, cannot start import process.  Please see details below.");
 		}
-		return importPatronDetails;
+		return results;
 	}
 
 	private void verifyRowPopulated(String[] columns) {

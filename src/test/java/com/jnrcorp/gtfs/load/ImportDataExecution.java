@@ -18,6 +18,7 @@ import com.jnrcorp.gtfs.dao.model.Route;
 import com.jnrcorp.gtfs.dao.model.Shape;
 import com.jnrcorp.gtfs.dao.model.Stop;
 import com.jnrcorp.gtfs.dao.model.StopTime;
+import com.jnrcorp.gtfs.dao.model.TravelTime;
 import com.jnrcorp.gtfs.dao.model.Trip;
 import com.jnrcorp.gtfs.load.service.ImportDataService;
 
@@ -29,13 +30,27 @@ public class ImportDataExecution extends BaseJunitTest {
 	@Qualifier("importDataService")
 	private ImportDataService importDataService;
 
-	private static File gtfsIngestionFile1 = new File("C:\\Users\\Joshua\\Downloads\\bus_data\\agency.csv");
-	private static File gtfsIngestionFile2 = new File("C:\\Users\\Joshua\\Downloads\\bus_data\\routes.csv");
-	private static File gtfsIngestionFile3 = new File("C:\\Users\\Joshua\\Downloads\\bus_data\\calendar_dates.csv");
-	private static File gtfsIngestionFile4 = new File("C:\\Users\\Joshua\\Downloads\\bus_data\\shapes.csv");
-	private static File gtfsIngestionFile5 = new File("C:\\Users\\Joshua\\Downloads\\bus_data\\trips.csv");
-	private static File gtfsIngestionFile6 = new File("C:\\Users\\Joshua\\Downloads\\bus_data\\stops.csv");
-	private static File gtfsIngestionFile7 = new File("C:\\Users\\Joshua\\Downloads\\bus_data\\stop_times.csv");
+	private static File gtfsIngestionFile1 = new File("metadata/bus_data/agency.txt");
+	private static File gtfsIngestionFile2 = new File("metadata/bus_data/routes.txt");
+	private static File gtfsIngestionFile3 = new File("metadata/bus_data/calendar_dates.txt");
+	private static File gtfsIngestionFile4 = new File("metadata/bus_data/shapes.txt");
+	private static File gtfsIngestionFile5 = new File("metadata/bus_data/trips.txt");
+	private static File gtfsIngestionFile6 = new File("metadata/bus_data/stops.txt");
+	private static File gtfsIngestionFile7 = new File("metadata/bus_data/stop_times.txt");
+
+	@Test
+	@Rollback(false)
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public void clearGTFS() {
+		importDataService.removeData(TravelTime.class);
+		importDataService.removeData(StopTime.class);
+		importDataService.removeData(Stop.class);
+		importDataService.removeData(Trip.class);
+		importDataService.removeData(Shape.class);
+		importDataService.removeData(CalendarDate.class);
+		importDataService.removeData(Route.class);
+		importDataService.removeData(Agency.class);
+	}
 
 	@Test
 	@Rollback(false)
