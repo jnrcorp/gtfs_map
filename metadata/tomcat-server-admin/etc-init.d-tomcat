@@ -1,0 +1,112 @@
+#!/bin/bash
+#
+# tomcat
+#
+# chkconfig: - 85 15
+# description:  Start up the Tomcat servlet engine.
+
+# Source function library.
+. /etc/init.d/functions
+
+RETVAL=$?
+CATALINA_HOME="/usr/tomcat"
+CATALINA_BASE="/usr/tomcat"
+JAVA_HOME="/usr/java/latest"
+TOMCAT_USER="tomcat"
+TOMCAT_GROUP="tomcat"
+
+# TO USE A DIFFERENT GARBAGE COLLECTOR - http://www.fasterj.com/articles/oraclecollectors1.shtml
+#CATALINA_OPTS="$CATALINA_OPTS -XX:+UseConcMarkSweepGC"
+
+# TO ENABLE JMX REMOTE MANAGEMENT
+#CATALINA_OPTS="$CATALINA_OPTS -Dcom.sun.management.jmxremote"
+#CATALINA_OPTS="$CATALINA_OPTS -Dcom.sun.management.jmxremote.port=1616"
+#CATALINA_OPTS="$CATALINA_OPTS -Dcom.sun.management.jmxremote.authenticate=false"
+#CATALINA_OPTS="$CATALINA_OPTS -Dcom.sun.management.jmxremote.ssl=false"
+
+# AWS SERVER - M4.XLARGE w/ 16 GB RAM
+CATALINA_OPTS="-XX:+PrintGCDetails"
+CATALINA_OPTS="$CATALINA_OPTS -verbose:gc"
+CATALINA_OPTS="$CATALINA_OPTS -Xloggc:/usr/local/logs/jvmlogs/gc.log"
+CATALINA_OPTS="$CATALINA_OPTS -XX:MaxPermSize=1g"
+CATALINA_OPTS="$CATALINA_OPTS -Xmx11g"
+CATALINA_OPTS="$CATALINA_OPTS -Xms5g"
+CATALINA_OPTS="$CATALINA_OPTS -XX:NewSize=2g"
+CATALINA_OPTS="$CATALINA_OPTS -XX:MaxNewSize=2g"
+CATALINA_OPTS="$CATALINA_OPTS -XX:SurvivorRatio=6"
+CATALINA_OPTS="$CATALINA_OPTS -XX:+UseG1GC"
+CATALINA_OPTS="$CATALINA_OPTS -XX:MaxGCPauseMillis=1000"
+CATALINA_OPTS="$CATALINA_OPTS -XX:+PrintGCDateStamps"
+CATALINA_OPTS="$CATALINA_OPTS -XX:+HeapDumpOnOutOfMemoryError"
+CATALINA_OPTS="$CATALINA_OPTS -XX:HeapDumpPath=/usr/local/logs/jvmlogs"
+CATALINA_OPTS="$CATALINA_OPTS -Djava.awt.headless=true"
+CATALINA_OPTS="$CATALINA_OPTS -Dorg.apache.el.parser.SKIP_IDENTIFIER_CHECK=true"
+CATALINA_OPTS="$CATALINA_OPTS -Dspring.profiles.active=prod"
+CATALINA_OPTS="$CATALINA_OPTS -Dserver.friendlyName='QSP Zone 1 Server 1'" # THIS LINE MUST BE MODIFIED FOR THE SERVER IT IS RUNNING ON
+CATALINA_OPTS="$CATALINA_OPTS -Dserver.isProdServer=true"
+CATALINA_OPTS="$CATALINA_OPTS -Duser.timezone='America/New_York'"
+
+export CATALINA_HOME
+export CATALINA_BASE
+export JAVA_HOME
+export CATALINA_OPTS
+
+echo "CATALINA_OPTS is set to $CATALINA_OPTS"
+echo "TOMCAT_USER is set to $TOMCAT_USER"
+
+case "$1" in
+ start)
+	if [ -z "$JAVA_HOME" ]; then
+		log_failure_msg "[FATAL]        No Java Development Kit found at $JAVA_HOME.  Cannot start tomcat."
+		exit 1
+	fi
+	if [ ! -d "$CATALINA_BASE/conf" ]; then
+		log_failure_msg "[FATAL]        No conf dir found user CATALINA_BASE $CATALINA_BASE. Cannot start tomcat."
+		exit 1
+	fi
+	if [ -f $CATALINA_HOME/bin/startup.sh ];  then
+		logger -s "Starting Tomcat as  $TOMCAT_USER"
+		/bin/su -s /bin/sh $TOMCAT_USER -c $CATALINA_HOME/bin/startup.sh
+	fi
+	;;
+ stop)
+	if [ -f $CATALINA_HOME/bin/shutdown.sh ]; then
+		logger -s "Stopping Tomcat"
+		/bin/su -s /bin/sh $TOMCAT_USER -c $CATALINA_HOME/bin/shutdown.sh
+		RETVAL=$?
+		echo $"Sleeping for 10...to verify tomcat shutdown gracefully."
+		sleep 10
+		TOMCAT_PROCID=`pgrep -U $TOMCAT_USER -f $CATALINA_BASE`
+		if [ -n "$TOMCAT_PROCID" ]; then
+			echo $"Tomcat process id $TOMCAT_PROCID could not be stopped normally, sending SIGTERM..."
+			kill $TOMCAT_PROCID
+			echo $"Sleeping for 10..."
+			sleep 10
+			TOMCAT_PROCID=`pgrep -U $TOMCAT_USER -f $CATALINA_BASE`
+			if [ -n "$TOMCAT_PROCID" ]; then
+				echo $"Tomcat could not shutdown normally, killing..."
+				kill -9 $TOMCAT_PROCID
+				echo $"Sleeping for 5..."
+				sleep 5
+			fi
+		fi
+	fi
+	;;
+ restart)
+	$0 stop
+	$0 start
+	;;
+ version)
+	if [ -f $CATALINA_HOME/bin/version.sh ]; then
+		logger -s "Display Tomcat Version"
+		/bin/su -s /bin/sh $TOMCAT_USER -c $CATALINA_HOME/bin/version.sh
+		RETVAL=$?
+	fi
+	;;
+ *)
+	echo $"Usage: $0 {start|stop|restart|version}"
+	exit 1
+	;;
+esac
+
+exit $RETVAL

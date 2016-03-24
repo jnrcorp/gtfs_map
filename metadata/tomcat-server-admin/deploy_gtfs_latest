@@ -1,0 +1,113 @@
+#
+# This script can reside in any directory.
+# Script does following:
+# 1. finds latest .war file from WAR_DIR
+# 2. stops 'tomcat' server.
+# 3. deletes APP_NAME folder under webapps dir.
+# 4. deletes .xml pertaining to APP_NAME under conf/Catalina/localhost
+# 5. deletes 'work' dir of tomcat pertaining to APP_NAME.  This cleans up compiled jsps
+# 6. starts 'tomcat' server
+# 7. clean deploy directory
+#
+#echo `who -m | awk '{print $1;}'`
+echo "sudo user $SUDO_USER"
+APP_NAME_INPUT=gtfs
+APP_NAME_OUTPUT=gtfs
+TOMCAT_BASE=/usr/local/tomcat_apps
+# directory under which the war file is located.
+WAR_DIR=/usr/local/tools/deploy/gtfs_war
+TOMCAT_SERVICE=tomcat
+TOMCAT_USER=tomcat
+TOMCAT_GROUP=tomcat
+
+echo "[INFO]    APP_NAME_INPUT:       $APP_NAME_INPUT"
+echo "[INFO]    APP_NAME_OUTPUT:      $APP_NAME_OUTPUT"
+echo "[INFO]    TOMCAT_BASE:          $TOMCAT_BASE"
+echo "[INFO]    WAR_DIR:              $WAR_DIR"
+
+if [ `id -u` -ne 0 ]; then
+        echo "sudo much?"
+        exit 1
+fi
+if [ -z "$1" ]; then
+        # find the most recent war file
+        WARFILE=`cd $WAR_DIR && ls -tr $APP_NAME_INPUT*.war | tail -1`
+else
+        WARFILE=$1
+fi
+
+WAR_FILEPATH=$WAR_DIR/$WARFILE
+
+echo "[INFO]    war to be deployed is $WAR_FILEPATH."
+
+if [ -z "$WAR_FILEPATH" ]; then
+        echo "[ERROR]   $APP_NAME_INPUT war file could not be found:  $WAR_FILEPATH."
+        exit 10
+fi
+if [ ! -r "$WAR_FILEPATH" ]; then
+        echo "[ERROR]   The war file $WAR_FILEPATH does not exist or isn't readable."
+        exit 30
+fi
+if [ ! -d "$TOMCAT_BASE" ]; then
+        echo "[ERROR]   $TOMCAT_BASE is not a valid directory"
+        exit 21
+fi
+
+echo "[INFO]    Deploying $WAR_FILEPATH ..."
+
+APPDIR="$TOMCAT_BASE/webapps/$APP_NAME_OUTPUT"
+
+#stop tomcat
+echo "[INFO]    Stopping Tomcat.."
+/sbin/service $TOMCAT_SERVICE stop 2>/dev/null
+sleep 10
+TOMCAT_PROCID=`pgrep -U $TOMCAT_USER -f $TOMCAT_BASE`
+if [ -n "$TOMCAT_PROCID" ]; then
+   echo "[INFO]    Tomcat process id $TOMCAT_PROCID could not be stopped normally, sending SIGTERM..."
+   kill $TOMCAT_PROCID
+   echo "[INFO]    Sleeping for 10..."
+   sleep 10
+   TOMCAT_PROCID=`pgrep -U $TOMCAT_USER -f $TOMCAT_BASE`
+   if [ -n "$TOMCAT_PROCID" ]; then
+       echo "[INFO]     tomcat could not shutdown normally, killing..."
+       kill -9 $TOMCAT_PROCID
+   fi
+fi
+echo "[INFO]    Tomcat stopped."
+
+if [ -d "$APPDIR" ]; then
+        echo "[INFO]    Removing dir $APPDIR..."
+        rm -fr "$APPDIR"
+        echo "[INFO]    $APPDIR removed."
+fi
+
+TRS_XML=$TOMCAT_BASE/conf/Catalina/localhost/$APP_NAME_OUTPUT.xml
+if [ -r "$TRS_XML" ]; then
+        echo "[INFO]    Removing $TRS_XML..."
+        rm -f "$TRS_XML"
+        echo "[INFO]    $TRS_XML removed."
+fi
+#remove jsp temp dir
+TRS_WORK=$TOMCAT_BASE/work/Catalina/localhost/$APP_NAME_OUTPUT
+if [ -d "$TRS_WORK" ]; then
+        echo "[INFO]    Removing dir $TRS_WORK..."
+        rm -fr "$TRS_WORK"
+        echo "[INFO]    $TRS_WORK removed."
+fi
+
+#copy war file to webapps
+cp $WAR_FILEPATH $APPDIR.war
+chown $TOMCAT_USER:$TOMCAT_GROUP $APPDIR.war
+echo "[INFO]    The file $WAR_FILEPATH is copied to $APPDIR.war "
+
+#start tomcat
+echo "[INFO]    Starting tomcat..."
+/sbin/service $TOMCAT_SERVICE start >/dev/null 2>&1 &
+#clean deploy directory
+echo "[INFO] 	Tomcat Started."
+echo "[INFO]	Cleaning Deploy Directory."
+	cd $WAR_DIR
+	DELETE_COUNT=`ls -t |tail -n +11 | xargs -I{} find '{}' -mtime +7| wc -l`
+	ls -t |tail -n +11 | xargs -I{} find '{}' -mtime +7| xargs rm -f
+echo "[INFO]	$DELETE_COUNT file(s) removed."
+echo "[INFO]    Done."
