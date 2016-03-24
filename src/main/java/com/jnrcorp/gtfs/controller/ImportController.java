@@ -23,13 +23,12 @@ import com.jnrcorp.gtfs.dao.model.Stop;
 import com.jnrcorp.gtfs.dao.model.StopTime;
 import com.jnrcorp.gtfs.dao.model.TravelTime;
 import com.jnrcorp.gtfs.dao.model.Trip;
-import com.jnrcorp.gtfs.load.ImportDataExecution;
 import com.jnrcorp.gtfs.load.service.ImportDataService;
 
 @Controller
 public class ImportController {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ImportDataExecution.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ImportController.class);
 
 	@Autowired
 	@Qualifier("importDataService")
