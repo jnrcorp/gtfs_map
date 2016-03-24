@@ -29,6 +29,7 @@ appender("STDOUT", ConsoleAppender) {
 }
 
 appender("ROLLING", RollingFileAppender) {
+	file = "${logbackdir}/gtfs.log"
 	rollingPolicy(TimeBasedRollingPolicy) {
 		FileNamePattern = "${logbackdir}/gtfs.log.%d{yyyy-MM-dd}"
 	}
@@ -43,7 +44,7 @@ logger("com", INFO)
 logger("org", INFO)
 logger("net", INFO)
 
-logger("com.3dx2", INFO)
+logger("com.jnrcorp", DEBUG)
 
 logger("org.springframework.integration", WARN)
 logger("org.springframework", WARN)
