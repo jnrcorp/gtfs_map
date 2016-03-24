@@ -33,7 +33,6 @@ import com.jnrcorp.gtfs.load.GTFSImportUtil;
 import com.jnrcorp.gtfs.load.GTFSRowImport;
 import com.jnrcorp.gtfs.load.ImportFailure;
 import com.jnrcorp.gtfs.load.ImportHeaderMatchInfo;
-import com.jnrcorp.gtfs.util.FileNameUtil;
 import com.jnrcorp.gtfs.util.StringUtil;
 
 @Service("importDataService")
@@ -67,7 +66,7 @@ public class ImportDataService {
 		try {
 			results = getObjectsForOperation(theClass, file);
 		} catch (IOException | InstantiationException | IllegalAccessException e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 		return results;
 	}
