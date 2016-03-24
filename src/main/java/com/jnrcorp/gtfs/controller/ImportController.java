@@ -35,13 +35,13 @@ public class ImportController {
 	@Qualifier("importDataService")
 	private ImportDataService importDataService;
 
-	private static File gtfsIngestionFile1 = new File("metadata/bus_data/agency.txt");
-	private static File gtfsIngestionFile2 = new File("metadata/bus_data/routes.txt");
-	private static File gtfsIngestionFile3 = new File("metadata/bus_data/calendar_dates.txt");
-	private static File gtfsIngestionFile4 = new File("metadata/bus_data/shapes.txt");
-	private static File gtfsIngestionFile5 = new File("metadata/bus_data/trips.txt");
-	private static File gtfsIngestionFile6 = new File("metadata/bus_data/stops.txt");
-	private static File gtfsIngestionFile7 = new File("metadata/bus_data/stop_times.txt");
+	private static File gtfsIngestionFile1 = new File("bus_data/agency.txt");
+	private static File gtfsIngestionFile2 = new File("bus_data/routes.txt");
+	private static File gtfsIngestionFile3 = new File("bus_data/calendar_dates.txt");
+	private static File gtfsIngestionFile4 = new File("bus_data/shapes.txt");
+	private static File gtfsIngestionFile5 = new File("bus_data/trips.txt");
+	private static File gtfsIngestionFile6 = new File("bus_data/stops.txt");
+	private static File gtfsIngestionFile7 = new File("bus_data/stop_times.txt");
 
 	@RequestMapping(method=RequestMethod.GET, value="loadData")
 	@ResponseBody
