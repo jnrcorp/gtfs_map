@@ -1,0 +1,82 @@
+sudo mkdir /usr/java
+sudo tar xvf ~/jdk-8u77-linux-x64.tar.gz -C /usr/java
+cd /usr/java
+sudo ln -s jdk1.8.0_77 latest
+sudo ln -s latest default
+cd /usr/bin
+sudo ln -s /usr/java/default/bin/java java
+sudo tar xvf ~/apache-tomcat-8.0.32.tar.gz -C /usr/local
+cd /usr/local/
+
+sudo mkdir /usr/local/tomcat_apps
+
+sudo mv apache-tomcat-8.0.32/conf tomcat_apps/conf
+sudo mv apache-tomcat-8.0.32/logs tomcat_apps/logs
+sudo mv apache-tomcat-8.0.32/temp tomcat_apps/temp
+sudo mv apache-tomcat-8.0.32/webapps tomcat_apps/webapps
+sudo mv apache-tomcat-8.0.32/work tomcat_apps/work
+
+sudo ln -s apache-tomcat-8.0.32 tomcat
+sudo vi /usr/local/tomcat_apps/conf/server.xml
+sudo rm -r /usr/local/tomcat_apps/webapps/docs
+sudo rm -r /usr/local/tomcat_apps/webapps/examples
+sudo rm -r /usr/local/tomcat_apps/webapps/host-manager
+sudo rm -r /usr/local/tomcat_apps/webapps/manager
+sudo vi /etc/init.d/tomcat
+sudo chmod 755 /etc/init.d/tomcat
+
+sudo chkconfig --add tomcat
+
+sudo chkconfig tomcat on
+sudo groupadd tomcat
+sudo useradd -s /bin/bash -g tomcat tomcat
+
+sudo chown -Rf tomcat:tomcat /home/tomcat
+
+sudo chown -Rf tomcat:tomcat /usr/local/tomcat
+sudo chown -Rf tomcat:tomcat /usr/local/tomcat_apps
+sudo chown -Rf tomcat:tomcat /usr/local/apache-tomcat-8.0.32
+sudo mkdir /usr/local/tools
+sudo mkdir /usr/local/tools/deploy
+sudo mkdir /usr/local/tools/deploy/scripts
+sudo mkdir /usr/local/tools/deploy/gtfs_war
+sudo vi /usr/local/tools/deploy/scripts/deploy_gtfs_latest.sh
+sudo chmod 775 /usr/local/tools/deploy/scripts/deploy_gtfs_latest.sh
+sudo chown -Rf tomcat:tomcat /usr/local/tools/
+sudo chown -Rf tomcat:tomcat /usr/local/tools
+sudo mkdir /usr/local/logs
+sudo mkdir /usr/local/logs/gtfs
+sudo mkdir /usr/local/logs/jvmlogs
+sudo chown -Rf tomcat:tomcat /usr/local/logs
+sudo yum update
+sudo service iptables stop
+sudo chkconfig iptables off
+sudo yum install ntp ntpdate ntp-doc
+sudo chkconfig ntpdate on
+sudo ntpdate pool.ntp.org
+sudo service ntpd start
+sudo yum install wget
+sudo yum install screen
+sudo vi /etc/selinux/config
+cd ~
+ls
+wget http://repo.mysql.com//mysql57-community-release-el6-7.noarch.rpm
+ls
+sudo yum localinstall mysql57-community-release-el6-7.noarch.rpm
+sudo yum install mysql-community-server
+sudo chkconfig mysqld on
+sudo service mysqld start
+sudo /usr/bin/mysql_secure_installation
+sudo grep 'temporary password' /var/log/mysqld.log
+sudo /usr/bin/mysql_secure_installation
+mysql -u root -p
+ls
+mv gtfs-01.00.01-SNAPSHOT.war /usr/local/tools/deploy/gtfs_war/
+sudo mv gtfs-01.00.01-SNAPSHOT.war /usr/local/tools/deploy/gtfs_war/
+cd /usr/local/tools/deploy/gtfs_war/
+ls -ltra
+sudo chown tomcat:tomcat gtfs-01.00.01-SNAPSHOT.war
+cd ../scripts/
+ls
+sudo ./deploy_gtfs_latest.sh
+tail -f /usr/local/tomcat_apps/logs/catalina.out
