@@ -64,19 +64,23 @@
 			function getIcon(travelTime, tripCount, route) {
 				var pinColor;
 				if (travelTime >= 0 && travelTime <= 10) {
-					pinColor = "9BFF08"; // greenish
+					pinColor = "04F567"; // green
+// 					pinColor = "0DF4FF"; // teal
 				} else if (travelTime > 10 && travelTime <= 20) {
-					pinColor = "E89B0C"; // orange
+					pinColor = "76FF35"; // yellow-green
+// 					pinColor = "490CE8"; // blue
 				} else if (travelTime > 20 && travelTime <= 30) {
-					pinColor = "FF0000"; // red
+					pinColor = "E8DE08";
+// 					pinColor = "9BFF08"; // greenish
 				} else if (travelTime > 30 && travelTime <= 40) {
-					pinColor = "490CE8"; // blue
+					pinColor = "FFB804"; // orange
+// 					pinColor = "E89B0C"; // orange
 				} else if (travelTime > 40 && travelTime <= 50) {
-					pinColor = "0DF4FF"; // teal
+					pinColor = "FF0000"; // red
 				} else if (travelTime > 50 && travelTime <= 60) {
 					pinColor = "CCCCCC"; // gray
 				} else if (travelTime > 60) {
-					pinColor = "000000"; // black
+					pinColor = "111111"; // black
 				}
 				var height = 0.5;
 				if (tripCount >= 100 && tripCount < 200) {

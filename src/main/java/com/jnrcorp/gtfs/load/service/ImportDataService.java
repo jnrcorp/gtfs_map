@@ -122,7 +122,7 @@ public class ImportDataService {
 				setFields(newObject, theClass, rowValuesByHeaderName);
 				results.add(newObject);
 
-				LOGGER.debug("Successfully prepped gtfs import: " + StringUtils.join(columnsValues, ';') + "; currentCount=" + currentLineCount);
+//				LOGGER.trace("Successfully prepped gtfs import: " + StringUtils.join(columnsValues, ';') + "; currentCount=" + currentLineCount);
 			} catch (InvalidInputException iie) {
 				processError(columnsValues, currentLineCount, iie);
 				failures.add(new ImportFailure(currentLineCount, iie.getMessage(), columnsValues));

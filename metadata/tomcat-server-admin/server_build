@@ -66,7 +66,6 @@ sudo yum localinstall mysql57-community-release-el6-7.noarch.rpm
 sudo yum install mysql-community-server
 sudo chkconfig mysqld on
 sudo service mysqld start
-sudo /usr/bin/mysql_secure_installation
 sudo grep 'temporary password' /var/log/mysqld.log
 sudo /usr/bin/mysql_secure_installation
 mysql -u root -p

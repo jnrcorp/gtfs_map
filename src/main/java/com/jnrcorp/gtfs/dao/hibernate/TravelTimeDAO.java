@@ -10,6 +10,10 @@ public interface TravelTimeDAO extends BaseObjectDAO {
 
 	void generateTravelTimeToPABT();
 
+	void generateTravelTimeToNYPenn();
+
 	List<TravelTimeOutput> getTravelTimes(Collection<Integer> stopIds, Range<Integer> travelTimeRange);
+
+	List<TravelTimeOutput> getTravelTimesOneTransfer(Collection<Integer> destinationStopIds, Range<Integer> travelTimeRange);
 
 }

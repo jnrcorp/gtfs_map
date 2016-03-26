@@ -30,13 +30,32 @@ public class ImportDataExecution extends BaseJunitTest {
 	@Qualifier("importDataService")
 	private ImportDataService importDataService;
 
-	private static File gtfsIngestionFile1 = new File("metadata/bus_data/agency.txt");
-	private static File gtfsIngestionFile2 = new File("metadata/bus_data/routes.txt");
-	private static File gtfsIngestionFile3 = new File("metadata/bus_data/calendar_dates.txt");
-	private static File gtfsIngestionFile4 = new File("metadata/bus_data/shapes.txt");
-	private static File gtfsIngestionFile5 = new File("metadata/bus_data/trips.txt");
-	private static File gtfsIngestionFile6 = new File("metadata/bus_data/stops.txt");
-	private static File gtfsIngestionFile7 = new File("metadata/bus_data/stop_times.txt");
+	private static final String busDataLocation = "C:\\Users\\Joshua\\Downloads\\bus_data\\";
+	private static final String railDataLocation = "C:\\Users\\Joshua\\Downloads\\rail_data\\";
+
+	private static final String agencyFileName = "agency.txt";
+	private static final String routesFileName = "routes.txt";
+	private static final String calendarDatesFileName = "calendar_dates.txt";
+	private static final String shapesFileName = "shapes.txt";
+	private static final String tripsFileName = "trips.txt";
+	private static final String stopsFileName = "stops.txt";
+	private static final String stopTimesFileName = "stop_times.txt";
+
+	private static File gtfsIngestionFileRail1 = new File(railDataLocation + agencyFileName);
+	private static File gtfsIngestionFileRail2 = new File(railDataLocation + routesFileName);
+	private static File gtfsIngestionFileRail3 = new File(railDataLocation + calendarDatesFileName);
+	private static File gtfsIngestionFileRail4 = new File(railDataLocation + shapesFileName);
+	private static File gtfsIngestionFileRail5 = new File(railDataLocation + tripsFileName);
+	private static File gtfsIngestionFileRail6 = new File(railDataLocation + stopsFileName);
+	private static File gtfsIngestionFileRail7 = new File(railDataLocation + stopTimesFileName);
+
+	private static File gtfsIngestionFileBus1 = new File(busDataLocation + agencyFileName);
+	private static File gtfsIngestionFileBus2 = new File(busDataLocation + routesFileName);
+	private static File gtfsIngestionFileBus3 = new File(busDataLocation + calendarDatesFileName);
+	private static File gtfsIngestionFileBus4 = new File(busDataLocation + shapesFileName);
+	private static File gtfsIngestionFileBus5 = new File(busDataLocation + tripsFileName);
+	private static File gtfsIngestionFileBus6 = new File(busDataLocation + stopsFileName);
+	private static File gtfsIngestionFileBus7 = new File(busDataLocation + stopTimesFileName);
 
 	@Test
 	@Rollback(false)
@@ -56,20 +75,32 @@ public class ImportDataExecution extends BaseJunitTest {
 	@Rollback(false)
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void ingestGTFS() {
-		importDataService.loadData(Agency.class, gtfsIngestionFile1);
-		LOGGER.info("Finished file 1");
-		importDataService.loadData(Route.class, gtfsIngestionFile2);
-		LOGGER.info("Finished file 2");
-		importDataService.loadData(CalendarDate.class, gtfsIngestionFile3);
-		LOGGER.info("Finished file 3");
-		importDataService.loadData(Shape.class, gtfsIngestionFile4);
-		LOGGER.info("Finished file 4");
-		importDataService.loadData(Trip.class, gtfsIngestionFile5);
-		LOGGER.info("Finished file 5");
-		importDataService.loadData(Stop.class, gtfsIngestionFile6);
-		LOGGER.info("Finished file 6");
-		importDataService.loadData(StopTime.class, gtfsIngestionFile7);
-		LOGGER.info("Finished file 7");
+		importDataService.loadData(Agency.class, gtfsIngestionFileRail1);
+		LOGGER.info("Finished Rail 1");
+		importDataService.loadData(Route.class, gtfsIngestionFileRail2);
+		LOGGER.info("Finished Rail 2");
+		importDataService.loadData(CalendarDate.class, gtfsIngestionFileRail3);
+		LOGGER.info("Finished Rail 3");
+		importDataService.loadData(Shape.class, gtfsIngestionFileRail4);
+		LOGGER.info("Finished Rail 4");
+		importDataService.loadData(Trip.class, gtfsIngestionFileRail5);
+		LOGGER.info("Finished Rail 5");
+		importDataService.loadData(Stop.class, gtfsIngestionFileRail6);
+		LOGGER.info("Finished Rail 6");
+		importDataService.loadData(StopTime.class, gtfsIngestionFileRail7);
+		LOGGER.info("Finished Rail 7");
+		importDataService.loadData(Route.class, gtfsIngestionFileBus2);
+		LOGGER.info("Finished Bus 2");
+		importDataService.loadData(CalendarDate.class, gtfsIngestionFileBus3);
+		LOGGER.info("Finished Bus 3");
+		importDataService.loadData(Shape.class, gtfsIngestionFileBus4);
+		LOGGER.info("Finished Bus 4");
+		importDataService.loadData(Trip.class, gtfsIngestionFileBus5);
+		LOGGER.info("Finished Bus 5");
+		importDataService.loadData(Stop.class, gtfsIngestionFileBus6);
+		LOGGER.info("Finished Bus 6");
+		importDataService.loadData(StopTime.class, gtfsIngestionFileBus7);
+		LOGGER.info("Finished Bus 7");
 	}
 
 }

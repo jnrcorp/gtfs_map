@@ -2,8 +2,6 @@ package com.jnrcorp.gtfs.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,9 +39,11 @@ public class TravelTimeController {
 	@ResponseBody
 	public List<TravelTimeView> travelTimes(HttpServletRequest request, HttpServletResponse response, ModelMap model, RedirectAttributes redirectAttributes, TravelTimesInput travelTimesInput) {
 		LOGGER.info("Loading travel times.");
-		List<Integer> stopIds = Arrays.asList(3511, 43274, 43310);
+		List<Integer> nyStopIds = Arrays.asList(3511, 43274, 43310, 105);
 		Range<Integer> travelTimeRange = new Range<>(travelTimesInput.getMinTravelTime(), travelTimesInput.getMaxTravelTime());
-		List<TravelTimeOutput> travelTimes = travelTimeDAO.getTravelTimes(stopIds, travelTimeRange);
+		List<TravelTimeOutput> travelTimes = travelTimeDAO.getTravelTimes(nyStopIds, travelTimeRange);
+		List<TravelTimeOutput> transferStopTravelTimes = travelTimeDAO.getTravelTimesOneTransfer(Arrays.asList(105), travelTimeRange);
+		travelTimes.addAll(transferStopTravelTimes);
 		Map<String, List<TravelTimeOutput>> timeViewsByRoute = new HashMap<>();
 		for (TravelTimeOutput travelTimeOutput : travelTimes) {
 			String key = travelTimeOutput.getRouteName() + "," + travelTimeOutput.getDirectionId();
@@ -58,15 +58,6 @@ public class TravelTimeController {
 		for (Map.Entry<String, List<TravelTimeOutput>> entry : timeViewsByRoute.entrySet()) {
 			TravelTimeView travelTimeView = new TravelTimeView();
 			String[] key = entry.getKey().split(",");
-			List<TravelTimeOutput> travelTimeOutputs = entry.getValue();
-			Collections.sort(travelTimeOutputs, new Comparator<TravelTimeOutput>() {
-
-				@Override
-				public int compare(TravelTimeOutput o1, TravelTimeOutput o2) {
-					return o1.getStopSequence().compareTo(o2.getStopSequence());
-				}
-
-			});
 			travelTimeView.setDirectionId(Integer.valueOf(key[1]));
 			travelTimeView.setRouteName(key[0]);
 			travelTimeView.setTravelTimes(entry.getValue());

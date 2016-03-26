@@ -1,6 +1,7 @@
 package com.jnrcorp.gtfs.dao.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import javax.persistence.Column;
@@ -33,7 +34,7 @@ public class TravelTime extends DAOBaseObject implements Serializable {
 	private Integer toStopId;
 
 	@Column(name="travel_time_minutes")
-	private BigInteger travelTimeMinutes;
+	private BigDecimal travelTimeMinutes;
 
 	@Column(name="total_trips")
 	private BigInteger totalTrips;
@@ -87,11 +88,11 @@ public class TravelTime extends DAOBaseObject implements Serializable {
 		this.toStopId = toStopId;
 	}
 
-	public BigInteger getTravelTimeMinutes() {
+	public BigDecimal getTravelTimeMinutes() {
 		return travelTimeMinutes;
 	}
 
-	public void setTravelTimeMinutes(BigInteger travelTimeMinutes) {
+	public void setTravelTimeMinutes(BigDecimal travelTimeMinutes) {
 		this.travelTimeMinutes = travelTimeMinutes;
 	}
 
