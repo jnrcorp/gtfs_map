@@ -29,20 +29,82 @@
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZjdWvOyA2Cbk4YW28JI9Ak__2tX4jwdE&callback=initMap" async defer></script>
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.2.min.js"></script>
     <script type="text/javascript">
-    	jQuery(document).ready(function() {
-    		jQuery.get("http://localhost:8080/gtfs/travelTimes?maxTravelTime=60", function(data) {
-    			jQuery.each(data, function (index, travelTimeView) {
-        			jQuery.each(travelTimeView.travelTimes, function(index, value) {
-        				var myLatLng = {lat: value.stopLatitude, lng: value.stopLongitude};
-        				var title = value.agencyId + ": " + value.routeName + " - " + value.stopName + "[" + value.travelTimeMinutes + "] - " + value.totalTripCount + " trips";
-        				var marker = new google.maps.Marker({
-    						position: myLatLng,
-    						map: map,
-    						title: title
-    					});
-        			});
-    			});
-    		});
+		jQuery(document).ready(function() {
+			jQuery.get("http://localhost:8080/gtfs/travelTimes?maxTravelTime=60", function(data) {
+				jQuery.each(data, function (index, travelTimeView) {
+					jQuery.each(travelTimeView.travelTimes, function(index, value) {
+						var myLatLng = {lat: value.stopLatitude, lng: value.stopLongitude};
+						var title = value.agencyId + ": " + value.routeName + " - " + value.stopName + "[" + value.travelTimeMinutes + "] - " + value.totalTripCount + " trips";
+						var pinImage = getIcon(value.travelTimeMinutes, value.totalTripCount, value.routeName);
+						var marker = new google.maps.Marker({
+							position: myLatLng,
+							map: map,
+							title: title,
+							icon: pinImage
+						});
+						var contentString = '<div id="content">'+
+							'<div id="siteNotice">'+
+							'</div>'+
+							'<h1 id="firstHeading" class="firstHeading">'+value.routeName + ": " + value.travelTimeMinutes + " mins - " + value.totalTripCount + " trips" + '</h1>'+
+							'<div id="bodyContent">'+value.stopName
+							'</div>'+
+							'</div>';
+        				var infowindow = new google.maps.InfoWindow({
+							content: contentString
+						});
+        				marker.addListener('click', function() {
+							infowindow.open(map, marker);
+						});
+						map.addListener('click', function(e) {
+         					infowindow.close(map, marker);
+						});
+					});
+				});
+			});
+			function getIcon(travelTime, tripCount, route) {
+				var pinColor;
+				if (travelTime >= 0 && travelTime <= 10) {
+					pinColor = "9BFF08"; // greenish
+				} else if (travelTime > 10 && travelTime <= 20) {
+					pinColor = "E89B0C"; // orange
+				} else if (travelTime > 20 && travelTime <= 30) {
+					pinColor = "FF0000"; // red
+				} else if (travelTime > 30 && travelTime <= 40) {
+					pinColor = "490CE8"; // blue
+				} else if (travelTime > 40 && travelTime <= 50) {
+					pinColor = "0DF4FF"; // teal
+				} else if (travelTime > 50 && travelTime <= 60) {
+					pinColor = "CCCCCC"; // gray
+				} else if (travelTime > 60) {
+					pinColor = "000000"; // black
+				}
+				var height = 0.5;
+				if (tripCount >= 100 && tripCount < 200) {
+					height = 0.75;
+				} else if (tripCount >= 200) {
+					height = 1;
+				} else if (tripCount >= 300) {
+					height = 1.25;
+				}
+				var dot = "%E2%80%A2";
+// 				var iconUrl = "https://chart.googleapis.com/chart?chst=d_bubble_icon_text_small&chld=ski|bb|"+title+"|FFFFFF|000000";
+// 				var iconUrl = "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + travelTime + "|" + pinColor + "|FFFFFF";
+				var iconUrl = "http://chart.apis.google.com/chart?chst=d_map_spin&chld=" + height + "|0|" + pinColor + "|12|b|" + travelTime;
+// 				var iconUrl = "http://chart.apis.google.com/chart?chst=d_bubble_text_small&chld=edge_bc|" + travelTime + "|" + pinColor + "|#FFFFFF";
+			    var pinImage = {
+			    	url: iconUrl,
+// 			    	size: new google.maps.Size(height, height),
+// 			    	origin: new google.maps.Point(0,0),
+// 			    	anchor: new google.maps.Point(10, height),
+// 			    	scaledSize: new google.maps.Size(25, 25)
+			    };
+// 			    pinImage = {
+// 		    		path: 'M 10,5 20,5 0,0, 20,0 z',
+// 		    		scale: height,
+// 		    		fillColor: pinColor
+// 			    };
+			    return pinImage;
+			}
     	});
     </script>
   </body>
