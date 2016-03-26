@@ -11,6 +11,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -29,6 +31,8 @@ import com.jnrcorp.gtfs.util.model.Range;
 @Controller
 public class TravelTimeController {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(TravelTimeController.class);
+
 	@Autowired
 	@Qualifier("travelTimeDAO")
 	private TravelTimeDAO travelTimeDAO;
@@ -36,6 +40,7 @@ public class TravelTimeController {
 	@RequestMapping(method=RequestMethod.GET, value="travelTimes")
 	@ResponseBody
 	public List<TravelTimeView> travelTimes(HttpServletRequest request, HttpServletResponse response, ModelMap model, RedirectAttributes redirectAttributes, TravelTimesInput travelTimesInput) {
+		LOGGER.info("Loading travel times.");
 		List<Integer> stopIds = Arrays.asList(3511, 43274, 43310);
 		Range<Integer> travelTimeRange = new Range<>(travelTimesInput.getMinTravelTime(), travelTimesInput.getMaxTravelTime());
 		List<TravelTimeOutput> travelTimes = travelTimeDAO.getTravelTimes(stopIds, travelTimeRange);
