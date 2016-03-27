@@ -5,33 +5,46 @@
     <meta name="viewport" content="initial-scale=1.0">
     <meta charset="utf-8">
     <style>
-      html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
-      #map {
-        height: 100%;
-      }
-      #legend {
-      	background-color: white;
-      	padding: 10px;
-      }
-      .container {
-      	width: 570px;
-      }
-      .inlineDiv {
-      	display: inline;
-      }
-      #colorLegend div {
-      	display: inline-block;
-      	width: 140px;
-      	padding-top: 2px;
-      	padding-bottom: 2px;
-      }
-    </style>
+		html, body {
+			height: 100%;
+			margin: 0;
+			padding: 0;
+		}
+		#map {
+			height: 100%;
+		}
+		#legend {
+			background-color: white;
+			padding: 10px;
+		}
+		.container {
+			width: 570px;
+		}
+		.inlineDiv {
+			display: inline;
+		}
+		#legend {
+			display: none;
+		}
+		#colorLegend div {
+			display: inline-block;
+			width: 140px;
+			padding-top: 2px;
+			padding-bottom: 2px;
+		}
+		#loading {
+			width: 500px;
+			height: 500px;
+			font-weight: bold;
+			font-size: 2em;
+		}
+		.ui-dialog-titlebar-close {
+			visibility: hidden;
+		}
+	</style>
   </head>
   <body>
+  	<div id="loading">Loading Data...</div>
   	<div id="legend">
   		<div class="container">
 	  		<div id="descriptionTitle">What is this map telling me?</div>
@@ -78,8 +91,17 @@
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZjdWvOyA2Cbk4YW28JI9Ak__2tX4jwdE&callback=initMap" async defer></script>
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.2.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
     <script type="text/javascript">
+    	jQuery(document).bind("ajaxSend", function(){
+    		jQuery("#loading").dialog("open");
+		}).bind("ajaxComplete", function(){
+			jQuery("#loading").dialog("close");
+		});
 		jQuery(document).ready(function() {
+			jQuery("#loading").dialog({
+				autoOpen: false
+			});
 			jQuery.get("/gtfs/travelTimes?maxTravelTime=50", function(data) {
 				jQuery.each(data, function (index, travelTimeView) {
 					jQuery.each(travelTimeView.travelTimes, function(index, value) {
@@ -110,6 +132,7 @@
 						});
 					});
 				});
+				jQuery("#legend").show();
 			});
 			function getIcon(travelTime, transferTravelTime, tripCount, route) {
 				var totalTravelTime = travelTime;
