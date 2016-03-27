@@ -9,6 +9,7 @@ public class TravelTimeOutput implements Serializable {
 	private Number travelTimeMinutes;
 	private Number transferTravelTime = 0;
 	private Number totalTripCount;
+	private Integer stopId;
 	private String stopName;
 	private Double stopLatitude;
 	private Double stopLongitude;
@@ -42,6 +43,14 @@ public class TravelTimeOutput implements Serializable {
 
 	public void setTotalTripCount(Number totalTripCount) {
 		this.totalTripCount = totalTripCount;
+	}
+
+	public Integer getStopId() {
+		return stopId;
+	}
+
+	public void setStopId(Integer stopId) {
+		this.stopId = stopId;
 	}
 
 	public String getStopName() {

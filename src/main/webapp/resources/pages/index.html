@@ -4,6 +4,7 @@
     <title>Simple Map</title>
     <meta name="viewport" content="initial-scale=1.0">
     <meta charset="utf-8">
+    <link href="https://code.jquery.com/ui/1.11.4/themes/ui-lightness/jquery-ui.css" type="text/css" rel="stylesheet">
     <style>
 		html, body {
 			height: 100%;
@@ -37,6 +38,7 @@
 			height: 500px;
 			font-weight: bold;
 			font-size: 2em;
+			background-color: #FFFFFF;
 		}
 		.ui-dialog-titlebar-close {
 			visibility: hidden;
@@ -100,13 +102,14 @@
 		});
 		jQuery(document).ready(function() {
 			jQuery("#loading").dialog({
-				autoOpen: false
+				autoOpen: false,
+				modal: true
 			});
 			jQuery.get("/gtfs/travelTimes?maxTravelTime=50", function(data) {
 				jQuery.each(data, function (index, travelTimeView) {
 					jQuery.each(travelTimeView.travelTimes, function(index, value) {
 						var myLatLng = {lat: value.stopLatitude, lng: value.stopLongitude};
-						var title = value.agencyId + ": " + value.routeName + " - " + value.stopName + "[" + value.travelTimeMinutes + "] - " + value.totalTripCount + " trips";
+						var title = value.agencyId + ": " + value.routeName + " - stopId=" + value.stopId + " [" + value.travelTimeMinutes + "] - " + value.totalTripCount + " trips";
 						var pinImage = getIcon(value.travelTimeMinutes, value.transferTravelTime, value.totalTripCount, value.routeName);
 						var marker = new google.maps.Marker({
 							position: myLatLng,

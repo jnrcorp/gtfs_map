@@ -131,7 +131,7 @@ public class TravelTimeDAOImpl extends BaseDAOHibernate implements TravelTimeDAO
 		sql.append(" 	tt.travel_time_minutes as travelTimeMinutes, ");
 		sql.append(" 	tt.total_trips as totalTripCount, ");
 		sql.append(" 	tt.direction_id as directionId, ");
-//		sql.append(" 	tt.stop_sequence as stopSequence, ");
+		sql.append(" 	s.stop_id as stopId, ");
 		sql.append(" 	s.stop_name as stopName, ");
 		sql.append(" 	s.stop_lat as stopLatitude, ");
 		sql.append(" 	s.stop_lon as stopLongitude, ");
@@ -171,6 +171,7 @@ public class TravelTimeDAOImpl extends BaseDAOHibernate implements TravelTimeDAO
 		sql.append("	CEIL(AVG(destination.travel_time_minutes)) as transferTravelTime, ");
 		sql.append(" 	SUM(transfer.total_trips) as totalTripCount, ");
 		sql.append(" 	transfer.direction_id as directionId, ");
+		sql.append(" 	s.stop_id as stopId, ");
 		sql.append(" 	s.stop_name as stopName, ");
 		sql.append(" 	s.stop_lat as stopLatitude, ");
 		sql.append(" 	s.stop_lon as stopLongitude, ");
