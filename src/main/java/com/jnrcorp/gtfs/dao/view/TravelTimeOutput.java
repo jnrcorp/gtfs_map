@@ -21,7 +21,7 @@ public class TravelTimeOutput implements Serializable {
 	}
 
 	public Number getTravelTimeMinutes() {
-		return travelTimeMinutes.intValue() + transferTravelTime.intValue();
+		return travelTimeMinutes;
 	}
 
 	public void setTravelTimeMinutes(Number travelTimeMinutes) {

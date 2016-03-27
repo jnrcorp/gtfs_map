@@ -26,7 +26,7 @@ DROP TABLE IF EXISTS `agency`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `agency` (
   `id` int(20) NOT NULL AUTO_INCREMENT,
-  `agency_id` varchar(10) DEFAULT NULL,
+  `agency_id` varchar(10) NOT NULL,
   `agency_name` varchar(60) DEFAULT NULL,
   `agency_url` varchar(300) DEFAULT NULL,
   `agency_timezone` varchar(30) DEFAULT NULL,
@@ -46,6 +46,7 @@ DROP TABLE IF EXISTS `calendar_dates`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `calendar_dates` (
   `id` int(20) NOT NULL AUTO_INCREMENT,
+  `agency_id` varchar(10) NOT NULL,
   `service_id` int(11) DEFAULT NULL,
   `date` datetime DEFAULT NULL,
   `exception_type` int(11) DEFAULT NULL,
@@ -65,7 +66,7 @@ DROP TABLE IF EXISTS `routes`;
 CREATE TABLE `routes` (
   `id` int(20) NOT NULL AUTO_INCREMENT,
   `route_id` int(11) DEFAULT NULL,
-  `agency_id` varchar(10) DEFAULT NULL,
+  `agency_id` varchar(10) NOT NULL,
   `route_short_name` varchar(10) DEFAULT NULL,
   `route_long_name` varchar(60) DEFAULT NULL,
   `route_type` int(11) DEFAULT NULL,
@@ -87,6 +88,7 @@ DROP TABLE IF EXISTS `shapes`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `shapes` (
   `id` int(20) NOT NULL AUTO_INCREMENT,
+  `agency_id` varchar(10) NOT NULL,
   `shape_id` int(11) DEFAULT NULL,
   `shape_pt_lat` double DEFAULT NULL,
   `shape_pt_lon` double DEFAULT NULL,
@@ -108,6 +110,7 @@ DROP TABLE IF EXISTS `stop_times`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `stop_times` (
   `id` int(20) NOT NULL AUTO_INCREMENT,
+  `agency_id` varchar(10) NOT NULL,
   `trip_id` int(11) DEFAULT NULL,
   `arrival_time` datetime DEFAULT NULL,
   `departure_time` datetime DEFAULT NULL,
@@ -134,6 +137,7 @@ DROP TABLE IF EXISTS `stops`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `stops` (
   `id` int(20) NOT NULL AUTO_INCREMENT,
+  `agency_id` varchar(10) NOT NULL,
   `stop_id` int(11) DEFAULT NULL,
   `stop_code` varchar(20) DEFAULT NULL,
   `stop_name` varchar(60) DEFAULT NULL,
@@ -157,6 +161,7 @@ DROP TABLE IF EXISTS `trips`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `trips` (
   `id` int(20) NOT NULL AUTO_INCREMENT,
+  `agency_id` varchar(10) NOT NULL,
   `route_id` int(11) DEFAULT NULL,
   `service_id` int(11) DEFAULT NULL,
   `trip_id` int(11) DEFAULT NULL,
@@ -185,6 +190,7 @@ DROP TABLE IF EXISTS `travel_times`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `travel_times` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `agency_id` varchar(10) NOT NULL,
   `route_id` int(11) NOT NULL,
   `direction_id` int(11) NOT NULL,
   `from_stop_id` int(11) NOT NULL,

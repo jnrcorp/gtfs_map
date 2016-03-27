@@ -125,7 +125,7 @@ public class TravelTimeDAOImpl extends BaseDAOHibernate implements TravelTimeDAO
 		sql.append(" 	s.stop_name as stopName, ");
 		sql.append(" 	s.stop_lat as stopLatitude, ");
 		sql.append(" 	s.stop_lon as stopLongitude, ");
-		sql.append(" 	r.route_short_name as routeName, ");
+		sql.append(" 	CASE WHEN r.agency_id = 'NJT' THEN r.route_long_name ELSE r.route_short_name END AS routeName, ");
 		sql.append(" 	r.agency_id as agencyId ");
 		sql.append(" FROM travel_times tt ");
 		sql.append(" JOIN stops s ON tt.from_stop_id = s.stop_id ");
@@ -164,7 +164,7 @@ public class TravelTimeDAOImpl extends BaseDAOHibernate implements TravelTimeDAO
 		sql.append(" 	s.stop_name as stopName, ");
 		sql.append(" 	s.stop_lat as stopLatitude, ");
 		sql.append(" 	s.stop_lon as stopLongitude, ");
-		sql.append(" 	r.route_short_name as routeName, ");
+		sql.append(" 	CASE WHEN r.agency_id = 'NJT' THEN r.route_long_name ELSE r.route_short_name END AS routeName, ");
 		sql.append(" 	r.agency_id as agencyId ");
 		sql.append(" FROM travel_times transfer ");
 		sql.append(" JOIN stops transfer_to ON transfer_to.stop_id = transfer.to_stop_id ");

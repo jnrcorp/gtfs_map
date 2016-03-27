@@ -72,10 +72,12 @@ public class Route extends DAOBaseObject implements Serializable {
 		this.routeId = routeId;
 	}
 
+	@Override
 	public String getAgencyId() {
 		return agencyId;
 	}
 
+	@Override
 	public void setAgencyId(String agencyId) {
 		this.agencyId = agencyId;
 	}

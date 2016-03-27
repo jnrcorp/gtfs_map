@@ -26,6 +26,9 @@ public class StopTime extends DAOBaseObject implements Serializable {
 	@Column(name="id")
 	private Long id;
 
+	@Column(name="agency_id", length=10)
+	private String agencyId;
+
 	@Column(name="trip_id")
 	private Integer tripId;
 
@@ -72,6 +75,16 @@ public class StopTime extends DAOBaseObject implements Serializable {
 	@Override
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	@Override
+	public String getAgencyId() {
+		return agencyId;
+	}
+
+	@Override
+	public void setAgencyId(String agencyId) {
+		this.agencyId = agencyId;
 	}
 
 	public Integer getTripId() {

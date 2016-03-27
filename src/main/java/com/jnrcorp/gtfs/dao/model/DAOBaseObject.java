@@ -6,4 +6,8 @@ public abstract class DAOBaseObject {
 
 	public abstract void setId(Long id);
 
+	public abstract String getAgencyId();
+
+	public abstract void setAgencyId(String agencyId);
+
 }

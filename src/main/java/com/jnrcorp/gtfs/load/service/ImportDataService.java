@@ -54,23 +54,6 @@ public class ImportDataService {
 		baseObjectDAO.removeAll(objectsToRemove);
 	}
 
-	public <T extends DAOBaseObject> void loadData(Class<T> theClass, File theFile) {
-		List<T> objectsToSave = createObjects(theClass, theFile);
-		LOGGER.info(theClass.getName() + " : " + objectsToSave.size());
-		baseObjectDAO.saveOrUpdateAll(objectsToSave);
-		LOGGER.info("Finished file: " + theFile.getName());
-	}
-
-	private <T extends DAOBaseObject> List<T> createObjects(Class<T> theClass, File file) {
-		List<T> results = null;
-		try {
-			results = getObjectsForOperation(theClass, file);
-		} catch (IOException | InstantiationException | IllegalAccessException e) {
-			throw new RuntimeException(e);
-		}
-		return results;
-	}
-
 	private <T extends DAOBaseObject> void setFields(T object, Class<T> theClass, Map<String, String> objectValues) {
 		Map<String, ? extends GTFSRowImport.FieldSetter<?>> fieldsByColumnHeader = GTFSRowImport.fieldSettersByClass.get(theClass);
 		for (String columnHeaderName : fieldsByColumnHeader.keySet()) {
@@ -82,8 +65,7 @@ public class ImportDataService {
 		}
 	}
 
-	private <T extends DAOBaseObject> List<T> getObjectsForOperation(Class<T> theClass, File file) throws IOException, InstantiationException, IllegalAccessException {
-		List<T> results = new ArrayList<>();
+	public <T extends DAOBaseObject> void loadData(Class<T> theClass, File file, String agencyId) throws IOException, InstantiationException, IllegalAccessException {
 		List<ImportFailure> failures = new ArrayList<>();
 
 		FileInputStream fis = new FileInputStream(file);
@@ -120,9 +102,12 @@ public class ImportDataService {
 				}
 				T newObject = theClass.newInstance();
 				setFields(newObject, theClass, rowValuesByHeaderName);
-				results.add(newObject);
+				if (agencyId != null) {
+					newObject.setAgencyId(agencyId);
+				}
+				baseObjectDAO.saveOrUpdate(newObject);
 
-//				LOGGER.trace("Successfully prepped gtfs import: " + StringUtils.join(columnsValues, ';') + "; currentCount=" + currentLineCount);
+				LOGGER.trace("Successfully prepped gtfs import: {}; currentCount={}", StringUtils.join(columnsValues, ';'), currentLineCount);
 			} catch (InvalidInputException iie) {
 				processError(columnsValues, currentLineCount, iie);
 				failures.add(new ImportFailure(currentLineCount, iie.getMessage(), columnsValues));
@@ -142,7 +127,7 @@ public class ImportDataService {
 		if (!CollectionUtils.isEmpty(failures)) {
 			throw new GenericIOException("There was a parsing error with at least 1 row, cannot start import process.  Please see details below.");
 		}
-		return results;
+		LOGGER.info("Finished file: " + file.getName());
 	}
 
 	private void verifyRowPopulated(String[] columns) {

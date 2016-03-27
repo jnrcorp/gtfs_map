@@ -19,6 +19,9 @@ public class Shape extends DAOBaseObject implements Serializable {
 	@Column(name="id")
 	private Long id;
 
+	@Column(name="agency_id", length=10)
+	private String agencyId;
+
 	@Column(name="shape_id")
 	private Integer shapeId;
 
@@ -46,6 +49,16 @@ public class Shape extends DAOBaseObject implements Serializable {
 	@Override
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	@Override
+	public String getAgencyId() {
+		return agencyId;
+	}
+
+	@Override
+	public void setAgencyId(String agencyId) {
+		this.agencyId = agencyId;
 	}
 
 	public Integer getShapeId() {

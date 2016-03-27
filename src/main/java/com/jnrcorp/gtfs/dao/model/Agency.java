@@ -66,10 +66,12 @@ public class Agency extends DAOBaseObject implements Serializable {
 		this.id = id;
 	}
 
+	@Override
 	public String getAgencyId() {
 		return agencyId;
 	}
 
+	@Override
 	public void setAgencyId(String agencyId) {
 		this.agencyId = agencyId;
 	}

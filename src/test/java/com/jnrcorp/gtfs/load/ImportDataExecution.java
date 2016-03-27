@@ -1,6 +1,7 @@
 package com.jnrcorp.gtfs.load;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -74,32 +75,34 @@ public class ImportDataExecution extends BaseJunitTest {
 	@Test
 	@Rollback(false)
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
-	public void ingestGTFS() {
-		importDataService.loadData(Agency.class, gtfsIngestionFileRail1);
+	public void ingestGTFS() throws ReflectiveOperationException, IOException {
+		importDataService.loadData(Agency.class, gtfsIngestionFileRail1, null);
 		LOGGER.info("Finished Rail 1");
-		importDataService.loadData(Route.class, gtfsIngestionFileRail2);
+		importDataService.loadData(Route.class, gtfsIngestionFileRail2, "NJT");
 		LOGGER.info("Finished Rail 2");
-		importDataService.loadData(CalendarDate.class, gtfsIngestionFileRail3);
+		importDataService.loadData(CalendarDate.class, gtfsIngestionFileRail3, "NJT");
 		LOGGER.info("Finished Rail 3");
-		importDataService.loadData(Shape.class, gtfsIngestionFileRail4);
+		importDataService.loadData(Shape.class, gtfsIngestionFileRail4, "NJT");
 		LOGGER.info("Finished Rail 4");
-		importDataService.loadData(Trip.class, gtfsIngestionFileRail5);
+		importDataService.loadData(Trip.class, gtfsIngestionFileRail5, "NJT");
 		LOGGER.info("Finished Rail 5");
-		importDataService.loadData(Stop.class, gtfsIngestionFileRail6);
+		importDataService.loadData(Stop.class, gtfsIngestionFileRail6, "NJT");
 		LOGGER.info("Finished Rail 6");
-		importDataService.loadData(StopTime.class, gtfsIngestionFileRail7);
+		importDataService.loadData(StopTime.class, gtfsIngestionFileRail7, "NJT");
 		LOGGER.info("Finished Rail 7");
-		importDataService.loadData(Route.class, gtfsIngestionFileBus2);
+//		importDataService.loadData(Route.class, gtfsIngestionFileBus1, "NJB");
+//		LOGGER.info("Finished Bus 1");
+		importDataService.loadData(Route.class, gtfsIngestionFileBus2, "NJB");
 		LOGGER.info("Finished Bus 2");
-		importDataService.loadData(CalendarDate.class, gtfsIngestionFileBus3);
+		importDataService.loadData(CalendarDate.class, gtfsIngestionFileBus3, "NJB");
 		LOGGER.info("Finished Bus 3");
-		importDataService.loadData(Shape.class, gtfsIngestionFileBus4);
+		importDataService.loadData(Shape.class, gtfsIngestionFileBus4, "NJB");
 		LOGGER.info("Finished Bus 4");
-		importDataService.loadData(Trip.class, gtfsIngestionFileBus5);
+		importDataService.loadData(Trip.class, gtfsIngestionFileBus5, "NJB");
 		LOGGER.info("Finished Bus 5");
-		importDataService.loadData(Stop.class, gtfsIngestionFileBus6);
+		importDataService.loadData(Stop.class, gtfsIngestionFileBus6, "NJB");
 		LOGGER.info("Finished Bus 6");
-		importDataService.loadData(StopTime.class, gtfsIngestionFileBus7);
+		importDataService.loadData(StopTime.class, gtfsIngestionFileBus7, "NJB");
 		LOGGER.info("Finished Bus 7");
 	}
 
