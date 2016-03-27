@@ -63,8 +63,9 @@ public class TravelTimeController {
 			if (stopOutput == null) {
 				stopOutput = new StopOutput(travelTimeOutput);
 				stopOutputsByStopId.put(key, stopOutput);
+			} else {
+				stopOutput.addTravelTime(travelTimeOutput);
 			}
-			stopOutput.addTravelTime(travelTimeOutput);
 		}
 		List<StopOutput> stopOutputs = new ArrayList<>(stopOutputsByStopId.values());
 		return stopOutputs;

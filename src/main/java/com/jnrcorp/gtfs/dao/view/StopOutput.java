@@ -26,12 +26,16 @@ public class StopOutput {
 		this.agencyId = travelTime.getAgencyId();
 		this.directionId = travelTime.getDirectionId();
 		this.destinationStopName = travelTime.getDestinationStopName();
+		travelTimeMinutes = travelTime.getTravelTimeMinutes().intValue();
+		transferTravelTime = travelTime.getTransferTravelTime().intValue();
+		totalTripCount = travelTime.getTotalTripCount().intValue();
+		travelTimes.add(travelTime);
 	}
 
 	public void addTravelTime(TravelTimeOutput travelTime) {
 		travelTimes.add(travelTime);
-		travelTimeMinutes = (travelTimeMinutes.intValue() + travelTime.getTravelTimeMinutes().intValue()) / travelTimes.size();
-		transferTravelTime = (transferTravelTime.intValue() + travelTime.getTransferTravelTime().intValue()) / travelTimes.size();
+		travelTimeMinutes = (travelTimeMinutes.intValue() + travelTime.getTravelTimeMinutes().intValue()) / 2;
+		transferTravelTime = (transferTravelTime.intValue() + travelTime.getTransferTravelTime().intValue()) / 2;
 		totalTripCount += travelTime.getTotalTripCount().intValue();
 	}
 
