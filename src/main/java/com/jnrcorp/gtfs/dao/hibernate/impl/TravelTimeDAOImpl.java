@@ -60,8 +60,6 @@ public class TravelTimeDAOImpl extends BaseDAOHibernate implements TravelTimeDAO
 	public void generateTravelTimeToNYPenn() {
 
 		// 105 - NY Penn
-		// 107 - Newark Penn
-		// 38174, 38187 - Secaucus Junction
 		List<Integer> njTransitStopIds = Arrays.asList(105);
 
 		StringBuilder sql = new StringBuilder();
@@ -89,14 +87,15 @@ public class TravelTimeDAOImpl extends BaseDAOHibernate implements TravelTimeDAO
 
 		saveOrUpdateAll(travelTimes);
 
-		generateTimesToTransferStops();
+		generateTimesToTransferStops(njTransitStopIds);
 	}
 
-	private void generateTimesToTransferStops() {
+	private void generateTimesToTransferStops(List<Integer> njDestinationStopIds) {
 
 		// 107 - Newark Penn
 		// 38174, 38187 - Secaucus Junction
-		List<Integer> njTransitStopIds = Arrays.asList(107, 38174, 38187);
+		// 63 - Hoboken
+		List<Integer> njTransitStopIds = Arrays.asList(63, 107, 38174, 38187);
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT ");
@@ -112,11 +111,17 @@ public class TravelTimeDAOImpl extends BaseDAOHibernate implements TravelTimeDAO
 		sql.append(" JOIN stops s ON st.stop_id = s.stop_id AND st.agency_id = s.agency_id ");
 		sql.append(" JOIN trips t ON st.trip_id = t.trip_id AND st.agency_id = t.agency_id ");
 		sql.append(" JOIN stop_times st_pabt ON st.trip_id = st_pabt.trip_id AND st.agency_id = st_pabt.agency_id AND st_pabt.stop_id IN (:njTransitStopIds) AND st_pabt.pickup_type = 0 ");
-		sql.append(" WHERE st.stop_id NOT IN (:njTransitStopIds) AND st.pickup_type = 0 ");
+		sql.append(" WHERE st.stop_id NOT IN (:njTransitStopIds) ");
+		sql.append(" 	AND st.pickup_type = 0 ");
+		sql.append(" 	AND st_pabt.agency_id = 'NJT' ");
+		sql.append("	AND st.stop_id NOT IN ( ");
+		sql.append("		SELECT tt.from_stop_id FROM travel_times tt WHERE tt.to_stop_id IN (:njDestinationStopIds) ");
+		sql.append("	) ");
 		sql.append(" GROUP BY t.route_id, t.direction_id, st.stop_id, st_pabt.stop_id ");
 
 		SQLQuery query = createSQLQuery(sql.toString());
 		query.setParameterList("njTransitStopIds", njTransitStopIds);
+		query.setParameterList("njDestinationStopIds", njDestinationStopIds);
 		query.setResultTransformer(new AliasToBeanResultTransformer(TravelTime.class));
 
 		List<TravelTime> travelTimes = list(query);
@@ -136,9 +141,12 @@ public class TravelTimeDAOImpl extends BaseDAOHibernate implements TravelTimeDAO
 		sql.append(" 	s.stop_lat as stopLatitude, ");
 		sql.append(" 	s.stop_lon as stopLongitude, ");
 		sql.append(" 	CASE WHEN r.agency_id = 'NJT' THEN r.route_long_name ELSE r.route_short_name END AS routeName, ");
+		sql.append("	tt.to_stop_id as destinationStopId, ");
+		sql.append("	sd.stop_name as destinationStopName, ");
 		sql.append(" 	r.agency_id as agencyId ");
 		sql.append(" FROM travel_times tt ");
 		sql.append(" JOIN stops s ON tt.from_stop_id = s.stop_id AND tt.agency_id = s.agency_id ");
+		sql.append(" JOIN stops sd ON tt.to_stop_id = sd.stop_id AND tt.agency_id = sd.agency_id ");
 		sql.append(" JOIN routes r ON tt.route_id = r.route_id AND tt.agency_id = r.agency_id ");
 		sql.append(" WHERE tt.to_stop_id IN (:stopIds) ");
 		if (travelTimeRange.bothExist()) {
@@ -167,31 +175,33 @@ public class TravelTimeDAOImpl extends BaseDAOHibernate implements TravelTimeDAO
 	public List<TravelTimeOutput> getTravelTimesOneTransfer(Collection<Integer> destinationStopIds, Range<Integer> travelTimeRange) {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT ");
-		sql.append(" 	CEIL(AVG(transfer.travel_time_minutes)) as travelTimeMinutes, ");
+		sql.append(" 	CEIL(AVG(transfer_from.travel_time_minutes)) as travelTimeMinutes, ");
 		sql.append("	CEIL(AVG(destination.travel_time_minutes)) as transferTravelTime, ");
-		sql.append(" 	SUM(transfer.total_trips) as totalTripCount, ");
-		sql.append(" 	transfer.direction_id as directionId, ");
+		sql.append(" 	SUM(DISTINCT transfer_from.total_trips) as totalTripCount, ");
+		sql.append(" 	transfer_from.direction_id as directionId, ");
 		sql.append(" 	s.stop_id as stopId, ");
 		sql.append(" 	s.stop_name as stopName, ");
 		sql.append(" 	s.stop_lat as stopLatitude, ");
 		sql.append(" 	s.stop_lon as stopLongitude, ");
 		sql.append(" 	CASE WHEN r.agency_id = 'NJT' THEN r.route_long_name ELSE r.route_short_name END AS routeName, ");
+		sql.append("	transfer_to.stop_id as destinationStopId, ");
+		sql.append("	transfer_to.stop_name as destinationStopName, ");
 		sql.append(" 	r.agency_id as agencyId ");
-		sql.append(" FROM travel_times transfer ");
-		sql.append(" JOIN stops transfer_to ON transfer_to.stop_id = transfer.to_stop_id AND transfer_to.agency_id = transfer.agency_id ");
+		sql.append(" FROM travel_times transfer_from ");
+		sql.append(" JOIN stops transfer_to ON transfer_to.stop_id = transfer_from.to_stop_id AND transfer_to.agency_id = transfer_from.agency_id ");
 		sql.append(" JOIN stops destination_from ON transfer_to.stop_lat = destination_from.stop_lat AND transfer_to.stop_lon = destination_from.stop_lon AND transfer_to.agency_id = destination_from.agency_id AND destination_from.stop_id NOT IN (:destinationStopIds) ");
 		sql.append(" JOIN travel_times destination ON destination.from_stop_id = destination_from.stop_id AND destination.agency_id = destination_from.agency_id ");
-		sql.append(" JOIN stops s ON transfer.from_stop_id = s.stop_id AND transfer.agency_id = s.agency_id AND s.stop_id NOT IN (:destinationStopIds) ");
-		sql.append(" JOIN routes r ON transfer.route_id = r.route_id AND transfer.agency_id = r.agency_id ");
+		sql.append(" JOIN stops s ON transfer_from.from_stop_id = s.stop_id AND transfer_from.agency_id = s.agency_id AND s.stop_id NOT IN (:destinationStopIds) ");
+		sql.append(" JOIN routes r ON transfer_from.route_id = r.route_id AND transfer_from.agency_id = r.agency_id ");
 		sql.append(" WHERE destination.to_stop_id IN (:destinationStopIds) ");
 		if (travelTimeRange.bothExist()) {
-			sql.append(" AND transfer.travel_time_minutes + destination.travel_time_minutes BETWEEN :minTravelTime AND :maxTravelTime ");
+			sql.append(" AND transfer_from.travel_time_minutes + destination.travel_time_minutes BETWEEN :minTravelTime AND :maxTravelTime ");
 		} else if (travelTimeRange.onlyMinExists()) {
-			sql.append(" AND transfer.travel_time_minutes + destination.travel_time_minutes >= :minTravelTime ");
+			sql.append(" AND transfer_from.travel_time_minutes + destination.travel_time_minutes >= :minTravelTime ");
 		} else if (travelTimeRange.onlyMaxExists()) {
-			sql.append(" AND transfer.travel_time_minutes + destination.travel_time_minutes <= :maxTravelTime ");
+			sql.append(" AND transfer_from.travel_time_minutes + destination.travel_time_minutes <= :maxTravelTime ");
 		}
-		sql.append(" GROUP BY s.stop_id, transfer.direction_id ");
+		sql.append(" GROUP BY s.stop_id, transfer_from.direction_id ");
 
 		SQLQuery query = createSQLQuery(sql.toString());
 		query.setParameterList("destinationStopIds", destinationStopIds);

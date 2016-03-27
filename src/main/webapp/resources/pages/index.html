@@ -105,39 +105,41 @@
 				autoOpen: false,
 				modal: true
 			});
-			jQuery.get("/gtfs/travelTimes?maxTravelTime=50", function(data) {
-				jQuery.each(data, function (index, travelTimeView) {
-					jQuery.each(travelTimeView.travelTimes, function(index, value) {
-						var myLatLng = {lat: value.stopLatitude, lng: value.stopLongitude};
-						var title = value.agencyId + ": " + value.routeName + " - stopId=" + value.stopId + " [" + value.travelTimeMinutes + "] - " + value.totalTripCount + " trips";
-						var pinImage = getIcon(value.travelTimeMinutes, value.transferTravelTime, value.totalTripCount, value.routeName);
-						var marker = new google.maps.Marker({
-							position: myLatLng,
-							map: map,
-							title: title,
-							icon: pinImage
-						});
-						var contentString = '<div id="content">'+
-							'<div id="siteNotice">'+
-							'</div>'+
-							'<h1 id="firstHeading" class="firstHeading">'+value.agencyId + " " + value.routeName + ": " + value.travelTimeMinutes + " mins - " + value.totalTripCount + " trips" + '</h1>'+
-							'<div id="bodyContent">'+value.stopName
-							'</div>'+
-							'</div>';
-        				var infowindow = new google.maps.InfoWindow({
-							content: contentString
-						});
-        				marker.addListener('click', function() {
-							infowindow.open(map, marker);
-						});
-						map.addListener('click', function(e) {
-         					infowindow.close(map, marker);
-						});
+			jQuery.get("/gtfs/travelTimes?maxTravelTime=60", function(data) {
+				jQuery.each(data, function (index, stopOutput) {
+					var routeName = "";
+					jQuery.each(stopOutput.travelTimes, function (i, travelTime) {
+						routeName += travelTime.routeName + " | ";
+					});
+					var myLatLng = {lat: stopOutput.stopLatitude, lng: stopOutput.stopLongitude};
+					var title = stopOutput.agencyId + routeName + " - stopId=" + stopOutput.stopId + " [" + stopOutput.travelTimeMinutes + "] - " + stopOutput.totalTripCount + " trips";
+					var pinImage = getIcon(stopOutput.travelTimeMinutes, stopOutput.transferTravelTime, stopOutput.totalTripCount, routeName, stopOutput.directionId);
+					var marker = new google.maps.Marker({
+						position: myLatLng,
+						map: map,
+						title: title,
+						icon: pinImage
+					});
+					var contentString = '<div id="content">'+
+						'<div id="siteNotice">'+
+						'</div>'+
+						'<h1 id="firstHeading" class="firstHeading">'+stopOutput.agencyId + " " + routeName + stopOutput.travelTimeMinutes + " mins - " + stopOutput.totalTripCount + " trips" + '</h1>'+
+						'<div id="bodyContent">'+stopOutput.stopName + " - Direction: " + stopOutput.directionId + " - Destination: " + stopOutput.destinationStopName;
+						'</div>'+
+						'</div>';
+       				var infowindow = new google.maps.InfoWindow({
+						content: contentString
+					});
+       				marker.addListener('click', function() {
+						infowindow.open(map, marker);
+					});
+					map.addListener('click', function(e) {
+        				infowindow.close(map, marker);
 					});
 				});
 				jQuery("#legend").show();
 			});
-			function getIcon(travelTime, transferTravelTime, tripCount, route) {
+			function getIcon(travelTime, transferTravelTime, tripCount, route, directionId) {
 				var totalTravelTime = travelTime;
 				if (transferTravelTime != null) {
 					totalTravelTime += transferTravelTime;
@@ -166,26 +168,40 @@
 				} else if (totalTravelTime > 60) {
 					pinColor = "111111"; // black
 				}
+				var heightPixels = 37;
 				var height = 0.5;
 				if (tripCount >= 50 && tripCount < 100) {
 					height = 0.62;
+					heightPixels = 46;
 				} else if (tripCount >= 100 && tripCount < 200) {
 					height = 0.75;
+					heightPixels = 56;
 				} else if (tripCount >= 200 && tripCount < 300) {
 					height = 1;
+					heightPixels = 73;
 				} else if (tripCount >= 300) {
 					height = 1.25;
+					heightPixels = 91;
+				}
+				var rotationDegrees = 0;
+				var pointStart = 0;
+				if (directionId === 0) {
+					rotationDegrees = -45
+					pointStart = 0;
+				} else {
+					rotationDegrees = 45;
+					pointStart = heightPixels;
 				}
 				var dot = "%E2%80%A2";
 // 				var iconUrl = "https://chart.googleapis.com/chart?chst=d_bubble_icon_text_small&chld=ski|bb|"+title+"|FFFFFF|000000";
 // 				var iconUrl = "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + travelTime + "|" + pinColor + "|FFFFFF";
-				var iconUrl = "http://chart.apis.google.com/chart?chst=d_map_spin&chld=" + height + "|0|" + pinColor + "|12|b|" + totalTravelTime;
+				var iconUrl = "http://chart.apis.google.com/chart?chst=d_map_spin&chld=" + height + "|" + rotationDegrees + "|" + pinColor + "|12|b|" + totalTravelTime;
 // 				var iconUrl = "http://chart.apis.google.com/chart?chst=d_bubble_text_small&chld=edge_bc|" + travelTime + "|" + pinColor + "|#FFFFFF";
 			    var pinImage = {
 			    	url: iconUrl,
 // 			    	size: new google.maps.Size(height, height),
-// 			    	origin: new google.maps.Point(0,0),
-// 			    	anchor: new google.maps.Point(10, height),
+// 			    	origin: new google.maps.Point(pointStart, 0),
+			    	anchor: new google.maps.Point(pointStart, heightPixels),
 // 			    	scaledSize: new google.maps.Size(25, 25)
 			    };
 // 			    pinImage = {
