@@ -96,7 +96,7 @@ CREATE TABLE `shapes` (
   `shape_dist_traveled` double DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `shape_id_idx` (`shape_id`),
-  KEY `shape_location_idx` (`shape_pt_lat`,`shape_pt_lon`),
+  KEY `shape_location_idx` (`shape_pt_lat`,`shape_pt_lon`, `agency_id`),
   KEY `shape_sequence_idx` (`shape_pt_sequence`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -122,7 +122,8 @@ CREATE TABLE `stop_times` (
   PRIMARY KEY (`id`),
   KEY `stop_id_idx` (`stop_id`),
   KEY `departure_time_idx` (`departure_time`),
-  KEY `trip_id_idx` (`trip_id`,`stop_sequence`),
+  KEY `trip_id_idx` (`trip_id`),
+  KEY `trip_sequence_id_idx` (`trip_id`,`stop_sequence`, `agency_id`),
   CONSTRAINT `st_stop_fk` FOREIGN KEY (`stop_id`) REFERENCES `stops` (`stop_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `st_trip_fk` FOREIGN KEY (`trip_id`) REFERENCES `trips` (`trip_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
@@ -171,9 +172,9 @@ CREATE TABLE `trips` (
   `shape_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `route_id_idx` (`route_id`),
-  KEY `trip_id_idx` (`trip_id`),
+  KEY `trip_id_idx` (`trip_id`, `agency_id`),
   KEY `shape_id_idx` (`shape_id`),
-  KEY `direction_id_idx` (`trip_id`, `direction_id`),
+  KEY `direction_id_idx` (`trip_id`, `direction_id`, `agency_id`),
   KEY `tr_service_id_fk_idx` (`service_id`),
   CONSTRAINT `tr_route_id_fk` FOREIGN KEY (`route_id`) REFERENCES `routes` (`route_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `tr_service_id_fk` FOREIGN KEY (`service_id`) REFERENCES `calendar_dates` (`service_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,

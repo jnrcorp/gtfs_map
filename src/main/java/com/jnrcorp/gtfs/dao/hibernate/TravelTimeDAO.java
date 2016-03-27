@@ -8,6 +8,8 @@ import com.jnrcorp.gtfs.util.model.Range;
 
 public interface TravelTimeDAO extends BaseObjectDAO {
 
+	void clearTravelTimes();
+
 	void generateTravelTimeToPABT();
 
 	void generateTravelTimeToNYPenn();

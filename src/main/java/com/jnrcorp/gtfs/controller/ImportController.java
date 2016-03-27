@@ -27,6 +27,8 @@ public class ImportController {
 	@RequestMapping(method=RequestMethod.GET, value="generateTravelTime")
 	@ResponseBody
 	public String generateTravelTime(HttpServletRequest request, HttpServletResponse response, ModelMap model) {
+		travelTimeDAO.clearTravelTimes();
+		LOGGER.info("Clear Travel Times data.");
 		travelTimeDAO.generateTravelTimeToPABT();
 		LOGGER.info("Finished generating PABT data.");
 		travelTimeDAO.generateTravelTimeToNYPenn();

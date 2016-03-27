@@ -19,6 +19,13 @@ import com.jnrcorp.gtfs.util.model.Range;
 public class TravelTimeDAOImpl extends BaseDAOHibernate implements TravelTimeDAO {
 
 	@Override
+	public void clearTravelTimes() {
+		String sql = "DELETE FROM travel_times";
+		SQLQuery query = createSQLQuery(sql);
+		query.executeUpdate();
+	}
+
+	@Override
 	public void generateTravelTimeToPABT() {
 
 		List<Integer> pabtStopIds = Arrays.asList(3511, 43274, 43310);
@@ -31,11 +38,12 @@ public class TravelTimeDAOImpl extends BaseDAOHibernate implements TravelTimeDAO
 		sql.append(" 	t.direction_id as directionId, ");
 		sql.append(" 	st.stop_id as fromStopId, ");
 		sql.append(" 	st_pabt.stop_id as toStopId, ");
-		sql.append(" 	st.stop_sequence as stopSequence ");
+		sql.append(" 	st.stop_sequence as stopSequence, ");
+		sql.append(" 	st.agency_id as agencyId ");
 		sql.append(" FROM stop_times st ");
-		sql.append(" JOIN stops s ON st.stop_id = s.stop_id ");
-		sql.append(" JOIN trips t ON st.trip_id = t.trip_id ");
-		sql.append(" JOIN stop_times st_pabt ON st.trip_id = st_pabt.trip_id AND st_pabt.stop_id IN (:pabtStopIds) AND st_pabt.pickup_type = 0 ");
+		sql.append(" JOIN stops s ON st.stop_id = s.stop_id AND st.agency_id = s.agency_id ");
+		sql.append(" JOIN trips t ON st.trip_id = t.trip_id AND st.agency_id = t.agency_id ");
+		sql.append(" JOIN stop_times st_pabt ON st.trip_id = st_pabt.trip_id AND st.agency_id = st_pabt.agency_id AND st_pabt.stop_id IN (:pabtStopIds) AND st_pabt.pickup_type = 0 ");
 		sql.append(" WHERE st.stop_id NOT IN (:pabtStopIds) AND st.pickup_type = 0 ");
 		sql.append(" GROUP BY t.route_id, t.direction_id, st.stop_id, st_pabt.stop_id ");
 
@@ -64,11 +72,12 @@ public class TravelTimeDAOImpl extends BaseDAOHibernate implements TravelTimeDAO
 		sql.append(" 	t.direction_id as directionId, ");
 		sql.append(" 	st.stop_id as fromStopId, ");
 		sql.append(" 	st_pabt.stop_id as toStopId, ");
-		sql.append(" 	st.stop_sequence as stopSequence ");
+		sql.append(" 	st.stop_sequence as stopSequence, ");
+		sql.append(" 	st.agency_id as agencyId ");
 		sql.append(" FROM stop_times st ");
-		sql.append(" JOIN stops s ON st.stop_id = s.stop_id ");
-		sql.append(" JOIN trips t ON st.trip_id = t.trip_id ");
-		sql.append(" JOIN stop_times st_pabt ON st.trip_id = st_pabt.trip_id AND st_pabt.stop_id IN (:njTransitStopIds) AND st_pabt.pickup_type = 0 ");
+		sql.append(" JOIN stops s ON st.stop_id = s.stop_id AND st.agency_id = s.agency_id ");
+		sql.append(" JOIN trips t ON st.trip_id = t.trip_id AND st.agency_id = t.agency_id ");
+		sql.append(" JOIN stop_times st_pabt ON st.trip_id = st_pabt.trip_id AND st.agency_id = st_pabt.agency_id AND st_pabt.stop_id IN (:njTransitStopIds) AND st_pabt.pickup_type = 0 ");
 		sql.append(" WHERE st.stop_id NOT IN (:njTransitStopIds) AND st.pickup_type = 0 ");
 		sql.append(" GROUP BY t.route_id, t.direction_id, st.stop_id, st_pabt.stop_id ");
 
@@ -97,11 +106,12 @@ public class TravelTimeDAOImpl extends BaseDAOHibernate implements TravelTimeDAO
 		sql.append(" 	t.direction_id as directionId, ");
 		sql.append(" 	st.stop_id as fromStopId, ");
 		sql.append(" 	st_pabt.stop_id as toStopId, ");
-		sql.append(" 	st.stop_sequence as stopSequence ");
+		sql.append(" 	st.stop_sequence as stopSequence, ");
+		sql.append(" 	st.agency_id as agencyId ");
 		sql.append(" FROM stop_times st ");
-		sql.append(" JOIN stops s ON st.stop_id = s.stop_id ");
-		sql.append(" JOIN trips t ON st.trip_id = t.trip_id ");
-		sql.append(" JOIN stop_times st_pabt ON st.trip_id = st_pabt.trip_id AND st_pabt.stop_id IN (:njTransitStopIds) AND st_pabt.pickup_type = 0 ");
+		sql.append(" JOIN stops s ON st.stop_id = s.stop_id AND st.agency_id = s.agency_id ");
+		sql.append(" JOIN trips t ON st.trip_id = t.trip_id AND st.agency_id = t.agency_id ");
+		sql.append(" JOIN stop_times st_pabt ON st.trip_id = st_pabt.trip_id AND st.agency_id = st_pabt.agency_id AND st_pabt.stop_id IN (:njTransitStopIds) AND st_pabt.pickup_type = 0 ");
 		sql.append(" WHERE st.stop_id NOT IN (:njTransitStopIds) AND st.pickup_type = 0 ");
 		sql.append(" GROUP BY t.route_id, t.direction_id, st.stop_id, st_pabt.stop_id ");
 
@@ -128,8 +138,8 @@ public class TravelTimeDAOImpl extends BaseDAOHibernate implements TravelTimeDAO
 		sql.append(" 	CASE WHEN r.agency_id = 'NJT' THEN r.route_long_name ELSE r.route_short_name END AS routeName, ");
 		sql.append(" 	r.agency_id as agencyId ");
 		sql.append(" FROM travel_times tt ");
-		sql.append(" JOIN stops s ON tt.from_stop_id = s.stop_id ");
-		sql.append(" JOIN routes r ON tt.route_id = r.route_id ");
+		sql.append(" JOIN stops s ON tt.from_stop_id = s.stop_id AND tt.agency_id = s.agency_id ");
+		sql.append(" JOIN routes r ON tt.route_id = r.route_id AND tt.agency_id = r.agency_id ");
 		sql.append(" WHERE tt.to_stop_id IN (:stopIds) ");
 		if (travelTimeRange.bothExist()) {
 			sql.append(" AND travel_time_minutes BETWEEN :minTravelTime AND :maxTravelTime ");
@@ -167,11 +177,11 @@ public class TravelTimeDAOImpl extends BaseDAOHibernate implements TravelTimeDAO
 		sql.append(" 	CASE WHEN r.agency_id = 'NJT' THEN r.route_long_name ELSE r.route_short_name END AS routeName, ");
 		sql.append(" 	r.agency_id as agencyId ");
 		sql.append(" FROM travel_times transfer ");
-		sql.append(" JOIN stops transfer_to ON transfer_to.stop_id = transfer.to_stop_id ");
-		sql.append(" JOIN stops destination_from ON transfer_to.stop_lat = destination_from.stop_lat AND transfer_to.stop_lon = destination_from.stop_lon AND destination_from.stop_id NOT IN (:destinationStopIds) ");
-		sql.append(" JOIN travel_times destination ON destination.from_stop_id = destination_from.stop_id ");
-		sql.append(" JOIN stops s ON transfer.from_stop_id = s.stop_id AND s.stop_id NOT IN (:destinationStopIds) ");
-		sql.append(" JOIN routes r ON transfer.route_id = r.route_id ");
+		sql.append(" JOIN stops transfer_to ON transfer_to.stop_id = transfer.to_stop_id AND transfer_to.agency_id = transfer.agency_id ");
+		sql.append(" JOIN stops destination_from ON transfer_to.stop_lat = destination_from.stop_lat AND transfer_to.stop_lon = destination_from.stop_lon AND transfer_to.agency_id = destination_from.agency_id AND destination_from.stop_id NOT IN (:destinationStopIds) ");
+		sql.append(" JOIN travel_times destination ON destination.from_stop_id = destination_from.stop_id AND destination.agency_id = destination_from.agency_id ");
+		sql.append(" JOIN stops s ON transfer.from_stop_id = s.stop_id AND transfer.agency_id = s.agency_id AND s.stop_id NOT IN (:destinationStopIds) ");
+		sql.append(" JOIN routes r ON transfer.route_id = r.route_id AND transfer.agency_id = r.agency_id ");
 		sql.append(" WHERE destination.to_stop_id IN (:destinationStopIds) ");
 		if (travelTimeRange.bothExist()) {
 			sql.append(" AND transfer.travel_time_minutes + destination.travel_time_minutes BETWEEN :minTravelTime AND :maxTravelTime ");
