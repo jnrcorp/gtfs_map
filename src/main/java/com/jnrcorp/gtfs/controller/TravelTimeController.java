@@ -26,6 +26,9 @@ import com.jnrcorp.gtfs.dao.view.TravelTimeOutput;
 import com.jnrcorp.gtfs.form.TravelTimesInput;
 import com.jnrcorp.gtfs.util.model.Range;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.core.util.StatusPrinter;
+
 @Controller
 public class TravelTimeController {
 
@@ -34,6 +37,15 @@ public class TravelTimeController {
 	@Autowired
 	@Qualifier("travelTimeDAO")
 	private TravelTimeDAO travelTimeDAO;
+
+	@RequestMapping(method=RequestMethod.GET, value="travelTimes")
+	@ResponseBody
+	public String logback(HttpServletRequest request, HttpServletResponse response, ModelMap model) {
+		// print internal state
+	    LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+	    StatusPrinter.print(lc);
+		return "loadData";
+	}
 
 	@RequestMapping(method=RequestMethod.GET, value="travelTimes")
 	@ResponseBody
