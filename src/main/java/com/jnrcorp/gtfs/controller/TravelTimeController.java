@@ -38,7 +38,7 @@ public class TravelTimeController {
 	@Qualifier("travelTimeDAO")
 	private TravelTimeDAO travelTimeDAO;
 
-	@RequestMapping(method=RequestMethod.GET, value="travelTimes")
+	@RequestMapping(method=RequestMethod.GET, value="logback")
 	@ResponseBody
 	public String logback(HttpServletRequest request, HttpServletResponse response, ModelMap model) {
 		// print internal state
