@@ -10,7 +10,6 @@
 	<!-- Shared version number properties -->
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<logbackdir>/usr/local/logs/gtfs</logbackdir>
 		<hibernate.version>5.1.0.Final</hibernate.version>
 		<org.springframework.version>4.2.5.RELEASE</org.springframework.version>
 		<slf4j.version>1.7.18</slf4j.version>
