@@ -42,7 +42,7 @@ CATALINA_OPTS="$CATALINA_OPTS -XX:HeapDumpPath=/usr/local/logs/jvmlogs"
 CATALINA_OPTS="$CATALINA_OPTS -Djava.awt.headless=true"
 CATALINA_OPTS="$CATALINA_OPTS -Dorg.apache.el.parser.SKIP_IDENTIFIER_CHECK=true"
 CATALINA_OPTS="$CATALINA_OPTS -Dspring.profiles.active=prod"
-CATALINA_OPTS="$CATALINA_OPTS -Dserver.friendlyName='QSP Zone 1 Server 1'" # THIS LINE MUST BE MODIFIED FOR THE SERVER IT IS RUNNING ON
+CATALINA_OPTS="$CATALINA_OPTS -Dserver.friendlyName='GTFS Server'" # THIS LINE MUST BE MODIFIED FOR THE SERVER IT IS RUNNING ON
 CATALINA_OPTS="$CATALINA_OPTS -Dserver.isProdServer=true"
 CATALINA_OPTS="$CATALINA_OPTS -Duser.timezone='America/New_York'"
 
