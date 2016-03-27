@@ -32,7 +32,7 @@
     <script type="text/javascript">
     	jQuery(document).ready(function() {
 			var hue = 0;
-			jQuery.get("http://localhost:8080/gtfs/travelTimes?maxTravelTime=20", function(data) {
+			jQuery.get("/gtfs/travelTimes?maxTravelTime=20", function(data) {
 				jQuery.each(data, function (index, travelTimeView) {
 					var heatMapData = new Array();
 					jQuery.each(travelTimeView.travelTimes, function(index, value) {
