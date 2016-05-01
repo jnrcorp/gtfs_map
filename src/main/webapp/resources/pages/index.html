@@ -43,12 +43,20 @@
 		.ui-dialog-titlebar-close {
 			visibility: hidden;
 		}
+		#timeInput {
+			margin-bottom: 5px;
+		}
 	</style>
   </head>
   <body>
   	<div id="loading">Loading Data...</div>
   	<div id="legend">
   		<div class="container">
+	  		<div id="timeInput">
+	  			Max Commute Time:&nbsp;
+	  			<input type="text" name="maxCommuteTime" id="maxCommuteTime" value="60" style="width:30px" />mins
+	  			<input type="button" name="update" id="updateCommuteTime" value="Update" />
+	  		</div>
 	  		<div id="descriptionTitle">What is this map telling me?</div>
 	  		<div id="description">
 	  			Each icon is a stop on either NJ Transit Trains (NJT) or NJ Transit Bus (NJB). The number in the middle is the
@@ -92,6 +100,7 @@
         });
         map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(document.getElementById('legend'));
       }
+      var markersArray = [];
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZjdWvOyA2Cbk4YW28JI9Ak__2tX4jwdE&callback=initMap" async defer></script>
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.2.min.js"></script>
@@ -107,7 +116,23 @@
 				autoOpen: false,
 				modal: true
 			});
-			jQuery.get("/gtfs/travelTimes?maxTravelTime=60", function(data) {
+			jQuery("#updateCommuteTime").click(function() {
+				clearMap();
+				displayTravelTimes();
+			});
+			displayTravelTimes();
+			jQuery("#legend").show();
+    	});
+		function clearMap() {
+			for (var i = 0; i < markersArray.length; i++) {
+				markersArray[i].setMap(null);
+			}
+			markersArray.length = 0;
+		}
+		function displayTravelTimes() {
+			var maxTravelTime = jQuery("#maxCommuteTime").val();
+			var url = "/gtfs/travelTimes?maxTravelTime=" + maxTravelTime;
+			jQuery.get(url, function(data) {
 				jQuery.each(data, function (index, stopOutput) {
 					var routeName = "";
 					jQuery.each(stopOutput.travelTimes, function (i, travelTime) {
@@ -130,91 +155,91 @@
 						'<div id="bodyContent">'+stopOutput.stopName + " - Direction: " + stopOutput.directionId + " - Destination: " + stopOutput.destinationStopName;
 						'</div>'+
 						'</div>';
-       				var infowindow = new google.maps.InfoWindow({
+	   				var infowindow = new google.maps.InfoWindow({
 						content: contentString
 					});
-       				marker.addListener('click', function() {
+	   				marker.addListener('click', function() {
 						infowindow.open(map, marker);
 					});
 					map.addListener('click', function(e) {
-        				infowindow.close(map, marker);
+	    				infowindow.close(map, marker);
 					});
+					markersArray.push(marker);
 				});
-				jQuery("#legend").show();
 			});
-			function getIcon(travelTime, transferTravelTime, tripCount, route, directionId, routeCount) {
-				var totalTravelTime = travelTime;
-				if (transferTravelTime != null) {
-					totalTravelTime += transferTravelTime;
-				}
-				var displayTravelTime = travelTime + "";
-				if (transferTravelTime != null && transferTravelTime > 0) {
-					displayTravelTime += "&#32;&#43;&#32;" + transferTravelTime + "T";
-				}
-				var pinColor;
-				if (totalTravelTime >= 0 && totalTravelTime <= 10) {
-					pinColor = "04F567"; // green
-// 					pinColor = "0DF4FF"; // teal
-				} else if (totalTravelTime > 10 && totalTravelTime <= 20) {
-					pinColor = "76FF35"; // yellow-green
-// 					pinColor = "490CE8"; // blue
-				} else if (totalTravelTime > 20 && totalTravelTime <= 30) {
-					pinColor = "E8DE08";
-// 					pinColor = "9BFF08"; // greenish
-				} else if (totalTravelTime > 30 && totalTravelTime <= 40) {
-					pinColor = "FFB804"; // orange
-// 					pinColor = "E89B0C"; // orange
-				} else if (totalTravelTime > 40 && totalTravelTime <= 50) {
-					pinColor = "FF0000"; // red
-				} else if (totalTravelTime > 50 && totalTravelTime <= 60) {
-					pinColor = "CCCCCC"; // gray
-				} else if (totalTravelTime > 60) {
-					pinColor = "111111"; // black
-				}
-				var heightPixels = 37;
-				var height = 0.5;
-				if (tripCount >= 50 && tripCount < 100) {
-					height = 0.62;
-					heightPixels = 46;
-				} else if (tripCount >= 100 && tripCount < 200) {
-					height = 0.75;
-					heightPixels = 56;
-				} else if (tripCount >= 200 && tripCount < 300) {
-					height = 1;
-					heightPixels = 73;
-				} else if (tripCount >= 300) {
-					height = 1.25;
-					heightPixels = 91;
-				}
-				var rotationDegrees = 0;
-				var pointStart = 0;
-				if (directionId === 0) {
-					rotationDegrees = -45
-					pointStart = 0;
-				} else {
-					rotationDegrees = 45;
-					pointStart = heightPixels;
-				}
-				var dot = "%E2%80%A2";
-// 				var iconUrl = "https://chart.googleapis.com/chart?chst=d_bubble_icon_text_small&chld=ski|bb|"+title+"|FFFFFF|000000";
-// 				var iconUrl = "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + travelTime + "|" + pinColor + "|FFFFFF";
-				var iconUrl = "http://chart.apis.google.com/chart?chst=d_map_spin&chld=" + height + "|" + rotationDegrees + "|" + pinColor + "|12|b|" + routeCount;
-// 				var iconUrl = "http://chart.apis.google.com/chart?chst=d_bubble_text_small&chld=edge_bc|" + travelTime + "|" + pinColor + "|#FFFFFF";
-			    var pinImage = {
-			    	url: iconUrl,
-// 			    	size: new google.maps.Size(height, height),
-// 			    	origin: new google.maps.Point(pointStart, 0),
-			    	anchor: new google.maps.Point(pointStart, heightPixels),
-// 			    	scaledSize: new google.maps.Size(25, 25)
-			    };
-// 			    pinImage = {
-// 		    		path: 'M 10,5 20,5 0,0, 20,0 z',
-// 		    		scale: height,
-// 		    		fillColor: pinColor
-// 			    };
-			    return pinImage;
+		}
+		function getIcon(travelTime, transferTravelTime, tripCount, route, directionId, routeCount) {
+			var totalTravelTime = travelTime;
+			if (transferTravelTime != null) {
+				totalTravelTime += transferTravelTime;
 			}
-    	});
+			var displayTravelTime = travelTime + "";
+			if (transferTravelTime != null && transferTravelTime > 0) {
+				displayTravelTime += "&#32;&#43;&#32;" + transferTravelTime + "T";
+			}
+			var pinColor;
+			if (totalTravelTime >= 0 && totalTravelTime <= 10) {
+				pinColor = "04F567"; // green
+//					pinColor = "0DF4FF"; // teal
+			} else if (totalTravelTime > 10 && totalTravelTime <= 20) {
+				pinColor = "76FF35"; // yellow-green
+//					pinColor = "490CE8"; // blue
+			} else if (totalTravelTime > 20 && totalTravelTime <= 30) {
+				pinColor = "E8DE08";
+//					pinColor = "9BFF08"; // greenish
+			} else if (totalTravelTime > 30 && totalTravelTime <= 40) {
+				pinColor = "FFB804"; // orange
+//					pinColor = "E89B0C"; // orange
+			} else if (totalTravelTime > 40 && totalTravelTime <= 50) {
+				pinColor = "FF0000"; // red
+			} else if (totalTravelTime > 50 && totalTravelTime <= 60) {
+				pinColor = "CCCCCC"; // gray
+			} else if (totalTravelTime > 60) {
+				pinColor = "111111"; // black
+			}
+			var heightPixels = 37;
+			var height = 0.5;
+			if (tripCount >= 50 && tripCount < 100) {
+				height = 0.62;
+				heightPixels = 46;
+			} else if (tripCount >= 100 && tripCount < 200) {
+				height = 0.75;
+				heightPixels = 56;
+			} else if (tripCount >= 200 && tripCount < 300) {
+				height = 1;
+				heightPixels = 73;
+			} else if (tripCount >= 300) {
+				height = 1.25;
+				heightPixels = 91;
+			}
+			var rotationDegrees = 0;
+			var pointStart = 0;
+			if (directionId === 0) {
+				rotationDegrees = -45
+				pointStart = 0;
+			} else {
+				rotationDegrees = 45;
+				pointStart = heightPixels;
+			}
+			var dot = "%E2%80%A2";
+//				var iconUrl = "https://chart.googleapis.com/chart?chst=d_bubble_icon_text_small&chld=ski|bb|"+title+"|FFFFFF|000000";
+//				var iconUrl = "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + travelTime + "|" + pinColor + "|FFFFFF";
+			var iconUrl = "http://chart.apis.google.com/chart?chst=d_map_spin&chld=" + height + "|" + rotationDegrees + "|" + pinColor + "|12|b|" + routeCount;
+//				var iconUrl = "http://chart.apis.google.com/chart?chst=d_bubble_text_small&chld=edge_bc|" + travelTime + "|" + pinColor + "|#FFFFFF";
+		    var pinImage = {
+		    	url: iconUrl,
+//			    	size: new google.maps.Size(height, height),
+//			    	origin: new google.maps.Point(pointStart, 0),
+		    	anchor: new google.maps.Point(pointStart, heightPixels),
+//			    	scaledSize: new google.maps.Size(25, 25)
+		    };
+//			    pinImage = {
+//		    		path: 'M 10,5 20,5 0,0, 20,0 z',
+//		    		scale: height,
+//		    		fillColor: pinColor
+//			    };
+		    return pinImage;
+		}
     </script>
   </body>
 </html>
