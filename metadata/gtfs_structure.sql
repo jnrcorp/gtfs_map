@@ -1,3 +1,4 @@
+DROP DATABASE  IF NOT EXISTS `gtfs`;
 CREATE DATABASE  IF NOT EXISTS `gtfs` /*!40100 DEFAULT CHARACTER SET utf8 */;
 USE `gtfs`;
 -- MySQL dump 10.13  Distrib 5.7.9, for Win64 (x86_64)
@@ -25,14 +26,12 @@ DROP TABLE IF EXISTS `agency`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `agency` (
-  `id` int(20) NOT NULL AUTO_INCREMENT,
   `agency_id` varchar(10) NOT NULL,
   `agency_name` varchar(60) DEFAULT NULL,
   `agency_url` varchar(300) DEFAULT NULL,
   `agency_timezone` varchar(30) DEFAULT NULL,
   `agency_lang` varchar(4) DEFAULT NULL,
   `agency_phone` varchar(30) DEFAULT NULL,
-  PRIMARY KEY (`id`),
   KEY `agency_id_idx` (`agency_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -45,12 +44,10 @@ DROP TABLE IF EXISTS `calendar_dates`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `calendar_dates` (
-  `id` int(20) NOT NULL AUTO_INCREMENT,
   `agency_id` varchar(10) NOT NULL,
   `service_id` int(11) DEFAULT NULL,
   `date` datetime DEFAULT NULL,
   `exception_type` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`),
   KEY `service_id_idx` (`service_id`),
   KEY `date_idx` (`date`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
@@ -64,7 +61,6 @@ DROP TABLE IF EXISTS `routes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `routes` (
-  `id` int(20) NOT NULL AUTO_INCREMENT,
   `route_id` int(11) DEFAULT NULL,
   `agency_id` varchar(10) NOT NULL,
   `route_short_name` varchar(10) DEFAULT NULL,
@@ -72,7 +68,6 @@ CREATE TABLE `routes` (
   `route_type` int(11) DEFAULT NULL,
   `route_url` varchar(300) DEFAULT NULL,
   `route_color` varchar(10) DEFAULT NULL,
-  PRIMARY KEY (`id`),
   KEY `route_id_idx` (`route_id`),
   KEY `agency_id_idx` (`agency_id`),
   CONSTRAINT `rt_agency_fk` FOREIGN KEY (`agency_id`) REFERENCES `agency` (`agency_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
@@ -87,14 +82,12 @@ DROP TABLE IF EXISTS `shapes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `shapes` (
-  `id` int(20) NOT NULL AUTO_INCREMENT,
   `agency_id` varchar(10) NOT NULL,
   `shape_id` int(11) DEFAULT NULL,
   `shape_pt_lat` double DEFAULT NULL,
   `shape_pt_lon` double DEFAULT NULL,
   `shape_pt_sequence` int(11) DEFAULT NULL,
   `shape_dist_traveled` double DEFAULT NULL,
-  PRIMARY KEY (`id`),
   KEY `shape_id_idx` (`shape_id`),
   KEY `shape_location_idx` (`shape_pt_lat`,`shape_pt_lon`, `agency_id`),
   KEY `shape_sequence_idx` (`shape_pt_sequence`)
@@ -109,7 +102,6 @@ DROP TABLE IF EXISTS `stop_times`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `stop_times` (
-  `id` int(20) NOT NULL AUTO_INCREMENT,
   `agency_id` varchar(10) NOT NULL,
   `trip_id` int(11) DEFAULT NULL,
   `arrival_time` datetime DEFAULT NULL,
@@ -119,7 +111,6 @@ CREATE TABLE `stop_times` (
   `pickup_type` int(11) DEFAULT NULL,
   `drop_off_type` int(11) DEFAULT NULL,
   `shape_dist_traveled` double DEFAULT NULL,
-  PRIMARY KEY (`id`),
   KEY `stop_id_idx` (`stop_id`),
   KEY `departure_time_idx` (`departure_time`),
   KEY `trip_id_idx` (`trip_id`),
@@ -137,7 +128,6 @@ DROP TABLE IF EXISTS `stops`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `stops` (
-  `id` int(20) NOT NULL AUTO_INCREMENT,
   `agency_id` varchar(10) NOT NULL,
   `stop_id` int(11) DEFAULT NULL,
   `stop_code` varchar(20) DEFAULT NULL,
@@ -146,7 +136,6 @@ CREATE TABLE `stops` (
   `stop_lat` double DEFAULT NULL,
   `stop_lon` double DEFAULT NULL,
   `zone_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`),
   KEY `stop_id_idx` (`stop_id`),
   KEY `stop_name_idx` (`stop_name`),
   KEY `stop_location_idx` (`stop_lat`,`stop_lon`)
@@ -161,7 +150,6 @@ DROP TABLE IF EXISTS `trips`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `trips` (
-  `id` int(20) NOT NULL AUTO_INCREMENT,
   `agency_id` varchar(10) NOT NULL,
   `route_id` int(11) DEFAULT NULL,
   `service_id` int(11) DEFAULT NULL,
@@ -170,7 +158,6 @@ CREATE TABLE `trips` (
   `direction_id` int(11) DEFAULT NULL,
   `block_id` varchar(20) DEFAULT NULL,
   `shape_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`),
   KEY `route_id_idx` (`route_id`),
   KEY `trip_id_idx` (`trip_id`, `agency_id`),
   KEY `shape_id_idx` (`shape_id`),
@@ -190,7 +177,6 @@ DROP TABLE IF EXISTS `travel_times`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `travel_times` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
   `agency_id` varchar(10) NOT NULL,
   `route_id` int(11) NOT NULL,
   `direction_id` int(11) NOT NULL,
@@ -199,7 +185,6 @@ CREATE TABLE `travel_times` (
   `travel_time_minutes` int(11) NOT NULL,
   `total_trips` int(11) NOT NULL,
   `stop_sequence` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
   KEY `from_stop_id_fk_idx` (`from_stop_id`),
   KEY `to_stop_id_fk_idx` (`to_stop_id`),
   KEY `route_id_fk_idx` (`route_id`),

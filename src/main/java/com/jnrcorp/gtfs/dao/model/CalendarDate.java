@@ -5,7 +5,6 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -21,16 +20,14 @@ public class CalendarDate extends DAOBaseObject implements Serializable {
 	private static final long serialVersionUID = 1120588925047476957L;
 
 	@Id
-	@GeneratedValue
-	@Column(name="id")
-	private Long id;
-
 	@Column(name="agency_id", length=10)
 	private String agencyId;
 
+	@Id
 	@Column(name="service_id")
 	private Integer serviceId;
 
+	@Id
 	@Column(name="date")
 	private Date date;
 
@@ -44,16 +41,6 @@ public class CalendarDate extends DAOBaseObject implements Serializable {
 
 	public CalendarDate() {
 		super();
-	}
-
-	@Override
-	public Long getId() {
-		return id;
-	}
-
-	@Override
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	@Override

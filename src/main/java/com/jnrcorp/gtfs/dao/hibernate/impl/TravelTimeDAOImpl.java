@@ -53,7 +53,7 @@ public class TravelTimeDAOImpl extends BaseDAOHibernate implements TravelTimeDAO
 
 		List<TravelTime> travelTimes = list(query);
 
-		saveOrUpdateAll(travelTimes);
+		saveAll(travelTimes);
 	}
 
 	@Override
@@ -85,7 +85,7 @@ public class TravelTimeDAOImpl extends BaseDAOHibernate implements TravelTimeDAO
 
 		List<TravelTime> travelTimes = list(query);
 
-		saveOrUpdateAll(travelTimes);
+		saveAll(travelTimes);
 
 		generateTimesToTransferStops(njTransitStopIds);
 	}
@@ -126,7 +126,7 @@ public class TravelTimeDAOImpl extends BaseDAOHibernate implements TravelTimeDAO
 
 		List<TravelTime> travelTimes = list(query);
 
-		saveOrUpdateAll(travelTimes);
+		saveAll(travelTimes);
 	}
 
 	@Override

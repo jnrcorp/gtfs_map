@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -18,10 +17,6 @@ public class Agency extends DAOBaseObject implements Serializable {
 	private static final long serialVersionUID = -4258816758410948772L;
 
 	@Id
-	@GeneratedValue
-	@Column(name="id")
-	private Long id;
-
 	@Column(name="agency_id", length=10)
 	private String agencyId;
 
@@ -54,16 +49,6 @@ public class Agency extends DAOBaseObject implements Serializable {
 		sb.append("agencyLanguage", agencyLanguage);
 		sb.append("agencyPhone", agencyPhone);
 		return super.toString();
-	}
-
-	@Override
-	public Long getId() {
-		return id;
-	}
-
-	@Override
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	@Override

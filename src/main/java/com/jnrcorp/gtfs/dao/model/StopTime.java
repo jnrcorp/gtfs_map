@@ -5,7 +5,6 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -22,13 +21,10 @@ public class StopTime extends DAOBaseObject implements Serializable {
 	private static final long serialVersionUID = -5158950334477280302L;
 
 	@Id
-	@GeneratedValue
-	@Column(name="id")
-	private Long id;
-
 	@Column(name="agency_id", length=10)
 	private String agencyId;
 
+	@Id
 	@Column(name="trip_id")
 	private Integer tripId;
 
@@ -38,6 +34,7 @@ public class StopTime extends DAOBaseObject implements Serializable {
 	@Column(name="departure_time")
 	private Date departureTime;
 
+	@Id
 	@Column(name="stop_id")
 	private Integer stopId;
 
@@ -65,16 +62,6 @@ public class StopTime extends DAOBaseObject implements Serializable {
 
 	public StopTime() {
 		super();
-	}
-
-	@Override
-	public Long getId() {
-		return id;
-	}
-
-	@Override
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	@Override

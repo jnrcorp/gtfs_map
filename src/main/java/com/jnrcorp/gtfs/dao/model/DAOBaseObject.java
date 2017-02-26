@@ -2,10 +2,6 @@ package com.jnrcorp.gtfs.dao.model;
 
 public abstract class DAOBaseObject {
 
-	public abstract Long getId();
-
-	public abstract void setId(Long id);
-
 	public abstract String getAgencyId();
 
 	public abstract void setAgencyId(String agencyId);

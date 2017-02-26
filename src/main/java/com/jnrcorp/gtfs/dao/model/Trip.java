@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -20,19 +19,18 @@ public class Trip extends DAOBaseObject implements Serializable {
 	private static final long serialVersionUID = -3341920712045406626L;
 
 	@Id
-	@GeneratedValue
-	@Column(name="id")
-	private Long id;
-
 	@Column(name="agency_id", length=10)
 	private String agencyId;
 
+	@Id
 	@Column(name="route_id")
 	private Integer routeId;
 
+	@Id
 	@Column(name="service_id")
 	private Integer serviceId;
 
+	@Id
 	@Column(name="trip_id")
 	private Integer tripId;
 
@@ -55,16 +53,6 @@ public class Trip extends DAOBaseObject implements Serializable {
 
 	public Trip() {
 		super();
-	}
-
-	@Override
-	public Long getId() {
-		return id;
-	}
-
-	@Override
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	@Override

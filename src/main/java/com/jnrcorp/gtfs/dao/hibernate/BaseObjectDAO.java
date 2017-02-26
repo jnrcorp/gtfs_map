@@ -3,7 +3,6 @@ package com.jnrcorp.gtfs.dao.hibernate;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import org.hibernate.SQLQuery;
 
@@ -25,13 +24,17 @@ public interface BaseObjectDAO {
 
 	void saveOrUpdate(Object object);
 
-	void saveOrUpdateAll(Collection<? extends DAOBaseObject> entities);
+	void saveAll(Collection<? extends DAOBaseObject> entities);
+
+	void saveStateless(Collection<? extends DAOBaseObject> entities);
 
 	<T> void removeObject(T object);
 
 	<T> void removeObject(Class<T> clazz, Serializable id);
 
 	<T> void removeAll(Collection<T> entities);
+
+	<T> void removeAllWithoutLoading(Class<T> clazz);
 
 	SQLQuery createSQLQuery(String sql);
 
@@ -42,8 +45,6 @@ public interface BaseObjectDAO {
 	void executeBatchSQL(String jndiName, String sql, List<List<Object>> paramBatches, Integer maxBatchSize);
 
 	<T> List<T> getBaseObjects(Class<T> clazz, Collection<Integer> ids);
-
-	<T> Map<Long, T> getBaseObjectsById(Class<T> clazz, Collection<Integer> baseObjectIds);
 
 	void refresh(Object o);
 

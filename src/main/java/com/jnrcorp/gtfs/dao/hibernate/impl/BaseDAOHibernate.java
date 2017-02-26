@@ -14,7 +14,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -26,6 +25,8 @@ import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.StatelessSession;
+import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +40,6 @@ import com.jnrcorp.gtfs.dao.hibernate.BaseObjectDAO;
 import com.jnrcorp.gtfs.dao.model.DAOBaseObject;
 import com.jnrcorp.gtfs.exception.DatabaseException;
 import com.jnrcorp.gtfs.util.CastingUtils;
-import com.jnrcorp.gtfs.util.PersistentUtils;
 
 @SuppressWarnings("unchecked")
 @Repository("baseObjectDAO")
@@ -161,13 +161,13 @@ public class BaseDAOHibernate implements BaseObjectDAO {
 	}
 
 	@Override
-	public void saveOrUpdateAll(Collection<? extends DAOBaseObject> entities) {
+	public void saveAll(Collection<? extends DAOBaseObject> entities) {
 		int i = 0;
 		BigDecimal totalCount = new BigDecimal(entities.size());
 		BigDecimal oneHundred = new BigDecimal(100);
-		for (Object object : entities) {
-			saveOrUpdate(object);
-			if (i % 1000 == 0) { // 20, same as the JDBC batch size
+		for (DAOBaseObject object : entities) {
+			save(object);
+			if (i % 5000 == 0) { // 20, same as the JDBC batch size
 				// flush a batch of inserts and release memory:
 				getSession().flush();
 				getSession().clear();
@@ -177,6 +177,29 @@ public class BaseDAOHibernate implements BaseObjectDAO {
 			}
 			++i;
 		}
+	}
+
+	@Override
+	public void saveStateless(Collection<? extends DAOBaseObject> entities) {
+		int i = 0;
+		BigDecimal totalCount = new BigDecimal(entities.size());
+		BigDecimal oneHundred = new BigDecimal(100);
+		StatelessSession statelessSession = sessionFactory.openStatelessSession();
+		Transaction tx = statelessSession.beginTransaction();
+		for (DAOBaseObject object : entities) {
+			statelessSession.insert(object);
+			if (i % 1000 == 0) { // 20, same as the JDBC batch size
+				// flush a batch of inserts and release memory:
+//				getSession().flush();
+//				getSession().clear();
+				BigDecimal currentCount = new BigDecimal(i);
+				BigDecimal percentComplete = currentCount.divide(totalCount, 4, RoundingMode.HALF_UP).multiply(oneHundred).setScale(2);
+				LOGGER.info("Flushing at " + i + ". " +  percentComplete + "%");
+			}
+			++i;
+		}
+		tx.commit();
+		statelessSession.close();
 	}
 
 	@Override
@@ -194,6 +217,12 @@ public class BaseDAOHibernate implements BaseObjectDAO {
 		for (Object object : entities) {
 			delete(object);
 		}
+	}
+
+	@Override
+	public <T> void removeAllWithoutLoading(Class<T> clazz) {
+		Query query = createQuery("DELETE FROM " + clazz.getName());
+		query.executeUpdate();
 	}
 
 	protected Date getSysDate() {
@@ -388,12 +417,6 @@ public class BaseDAOHibernate implements BaseObjectDAO {
 		Criteria criteria = createCriteria(clazz);
 		criteria.add(Restrictions.in("id", baseObjectIds));
 		return list(criteria);
-	}
-
-	@Override
-	public <T> Map<Long, T> getBaseObjectsById(Class<T> clazz, Collection<Integer> baseObjectIds) {
-		List<T> baseObjects = getBaseObjects(clazz, baseObjectIds);
-		return PersistentUtils.objectsListToMapById(baseObjects);
 	}
 
 	@Override

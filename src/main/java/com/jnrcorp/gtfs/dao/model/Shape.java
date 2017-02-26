@@ -4,9 +4,11 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
 @Entity
 @Table(name="shapes")
@@ -15,13 +17,10 @@ public class Shape extends DAOBaseObject implements Serializable {
 	private static final long serialVersionUID = 843673252400564723L;
 
 	@Id
-	@GeneratedValue
-	@Column(name="id")
-	private Long id;
-
 	@Column(name="agency_id", length=10)
 	private String agencyId;
 
+	@Id
 	@Column(name="shape_id")
 	private Integer shapeId;
 
@@ -31,6 +30,7 @@ public class Shape extends DAOBaseObject implements Serializable {
 	@Column(name="shape_pt_lon")
 	private Double shapePointLongitude;
 
+	@Id
 	@Column(name="shape_pt_sequence")
 	private Integer shapePointSequence;
 
@@ -42,13 +42,28 @@ public class Shape extends DAOBaseObject implements Serializable {
 	}
 
 	@Override
-	public Long getId() {
-		return id;
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof Shape)) {
+			return false;
+		}
+		Shape other = (Shape) obj;
+		EqualsBuilder eb = new EqualsBuilder();
+		eb.append(agencyId, other.agencyId);
+		eb.append(shapeId, other.shapeId);
+		eb.append(shapePointSequence, other.shapePointSequence);
+		return eb.isEquals();
 	}
 
 	@Override
-	public void setId(Long id) {
-		this.id = id;
+	public int hashCode() {
+		HashCodeBuilder hcb = new HashCodeBuilder();
+		hcb.append(agencyId);
+		hcb.append(shapeId);
+		hcb.append(shapePointSequence);
+		return hcb.toHashCode();
 	}
 
 	@Override

@@ -6,7 +6,6 @@ import java.math.BigInteger;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -17,22 +16,22 @@ public class TravelTime extends DAOBaseObject implements Serializable {
 	private static final long serialVersionUID = -8578420745865450340L;
 
 	@Id
-	@GeneratedValue
-	@Column(name="id")
-	private Long id;
-
 	@Column(name="agency_id", length=10)
 	private String agencyId;
 
+	@Id
 	@Column(name="route_id")
 	private Integer routeId;
 
+	@Id
 	@Column(name="direction_id")
 	private Integer directionId;
 
+	@Id
 	@Column(name="from_stop_id")
 	private Integer fromStopId;
 
+	@Id
 	@Column(name="to_stop_id")
 	private Integer toStopId;
 
@@ -42,21 +41,12 @@ public class TravelTime extends DAOBaseObject implements Serializable {
 	@Column(name="total_trips")
 	private BigInteger totalTrips;
 
+	@Id
 	@Column(name="stop_sequence")
 	private Integer stopSequence;
 
 	public TravelTime() {
 		super();
-	}
-
-	@Override
-	public Long getId() {
-		return id;
-	}
-
-	@Override
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	@Override

@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import com.jnrcorp.gtfs.dao.hibernate.BaseObjectDAO;
-import com.jnrcorp.gtfs.dao.hibernate.GTFSRemovalDAO;
 import com.jnrcorp.gtfs.dao.model.DAOBaseObject;
 import com.jnrcorp.gtfs.exception.GenericIOException;
 import com.jnrcorp.gtfs.exception.ImportHeaderException;
@@ -45,13 +44,10 @@ public class ImportDataService {
 	@Qualifier("baseObjectDAO")
 	private BaseObjectDAO baseObjectDAO;
 
-	@Autowired
-	@Qualifier("gtfsRemovalDAO")
-	private GTFSRemovalDAO gtfsRemovalDAO;
-
 	public <T> void removeData(Class<T> theClass) {
-		List<T> objectsToRemove = baseObjectDAO.getAll(theClass);
-		baseObjectDAO.removeAll(objectsToRemove);
+		baseObjectDAO.removeAllWithoutLoading(theClass);
+//		List<T> objectsToRemove = baseObjectDAO.getAll(theClass);
+//		baseObjectDAO.removeAll(objectsToRemove);
 	}
 
 	private <T extends DAOBaseObject> void setFields(T object, Class<T> theClass, Map<String, String> objectValues) {
@@ -60,7 +56,7 @@ public class ImportDataService {
 			if (objectValues.containsKey(columnHeaderName)) {
 				GTFSRowImport.FieldSetter<DAOBaseObject> fieldSetter = (GTFSRowImport.FieldSetter<DAOBaseObject>) fieldsByColumnHeader.get(columnHeaderName);
 				String consumerFieldValue = objectValues.get(columnHeaderName);
-				fieldSetter.setValue(object, consumerFieldValue, baseObjectDAO);
+				fieldSetter.setValue(object, consumerFieldValue);
 			}
 		}
 	}
@@ -84,6 +80,7 @@ public class ImportDataService {
 			throw new ImportHeaderException("Please verify the column headers in your import file: " + headerMatchInfo.getCause());
 		}
 
+		List<T> allObjects = new ArrayList<>();
 		String[] columnsValues = null;
 		int currentLineCount = 0;
 		while ((columnsValues = reader.readNext()) != null) {
@@ -105,7 +102,7 @@ public class ImportDataService {
 				if (agencyId != null) {
 					newObject.setAgencyId(agencyId);
 				}
-				baseObjectDAO.saveOrUpdate(newObject);
+				allObjects.add(newObject);
 
 				LOGGER.trace("Successfully prepped gtfs import: {}; currentCount={}", StringUtils.join(columnsValues, ';'), currentLineCount);
 			} catch (InvalidInputException iie) {
@@ -120,6 +117,7 @@ public class ImportDataService {
 			}
 		}
 		lin.close();
+		baseObjectDAO.saveAll(allObjects);
 		for (ImportFailure importFailure : failures) {
 			String errorMessage = importFailure.getFailureMessage();
 			LOGGER.error(errorMessage);
