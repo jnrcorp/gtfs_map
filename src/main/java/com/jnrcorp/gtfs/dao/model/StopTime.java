@@ -57,9 +57,6 @@ public class StopTime extends DAOBaseObject implements Serializable {
 	})
 	private DropOffType dropOffType;
 
-	@Column(name="shape_dist_traveled")
-	private Double shapeDistanceTraveled;
-
 	public StopTime() {
 		super();
 	}
@@ -128,14 +125,6 @@ public class StopTime extends DAOBaseObject implements Serializable {
 
 	public void setDropOffType(DropOffType dropOffType) {
 		this.dropOffType = dropOffType;
-	}
-
-	public Double getShapeDistanceTraveled() {
-		return shapeDistanceTraveled;
-	}
-
-	public void setShapeDistanceTraveled(Double shapeDistanceTraveled) {
-		this.shapeDistanceTraveled = shapeDistanceTraveled;
 	}
 
 }

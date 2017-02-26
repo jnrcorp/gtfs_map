@@ -48,9 +48,6 @@ public class Trip extends DAOBaseObject implements Serializable {
 	@Column(name="block_id", length=20)
 	private String blockId;
 
-	@Column(name="shape_id")
-	private Integer shapeId;
-
 	public Trip() {
 		super();
 	}
@@ -111,14 +108,6 @@ public class Trip extends DAOBaseObject implements Serializable {
 
 	public void setBlockId(String blockId) {
 		this.blockId = blockId;
-	}
-
-	public Integer getShapeId() {
-		return shapeId;
-	}
-
-	public void setShapeId(Integer shapeId) {
-		this.shapeId = shapeId;
 	}
 
 }

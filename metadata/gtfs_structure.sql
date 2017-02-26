@@ -1,4 +1,4 @@
-DROP DATABASE  IF NOT EXISTS `gtfs`;
+DROP DATABASE  IF EXISTS `gtfs`;
 CREATE DATABASE  IF NOT EXISTS `gtfs` /*!40100 DEFAULT CHARACTER SET utf8 */;
 USE `gtfs`;
 -- MySQL dump 10.13  Distrib 5.7.9, for Win64 (x86_64)
@@ -75,26 +75,6 @@ CREATE TABLE `routes` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `shapes`
---
-
-DROP TABLE IF EXISTS `shapes`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `shapes` (
-  `agency_id` varchar(10) NOT NULL,
-  `shape_id` int(11) DEFAULT NULL,
-  `shape_pt_lat` double DEFAULT NULL,
-  `shape_pt_lon` double DEFAULT NULL,
-  `shape_pt_sequence` int(11) DEFAULT NULL,
-  `shape_dist_traveled` double DEFAULT NULL,
-  KEY `shape_id_idx` (`shape_id`),
-  KEY `shape_location_idx` (`shape_pt_lat`,`shape_pt_lon`, `agency_id`),
-  KEY `shape_sequence_idx` (`shape_pt_sequence`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `stop_times`
 --
 
@@ -110,7 +90,6 @@ CREATE TABLE `stop_times` (
   `stop_sequence` int(11) DEFAULT NULL,
   `pickup_type` int(11) DEFAULT NULL,
   `drop_off_type` int(11) DEFAULT NULL,
-  `shape_dist_traveled` double DEFAULT NULL,
   KEY `stop_id_idx` (`stop_id`),
   KEY `departure_time_idx` (`departure_time`),
   KEY `trip_id_idx` (`trip_id`),
@@ -157,15 +136,12 @@ CREATE TABLE `trips` (
   `trip_headsign` varchar(120) DEFAULT NULL,
   `direction_id` int(11) DEFAULT NULL,
   `block_id` varchar(20) DEFAULT NULL,
-  `shape_id` int(11) DEFAULT NULL,
   KEY `route_id_idx` (`route_id`),
   KEY `trip_id_idx` (`trip_id`, `agency_id`),
-  KEY `shape_id_idx` (`shape_id`),
   KEY `direction_id_idx` (`trip_id`, `direction_id`, `agency_id`),
   KEY `tr_service_id_fk_idx` (`service_id`),
   CONSTRAINT `tr_route_id_fk` FOREIGN KEY (`route_id`) REFERENCES `routes` (`route_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `tr_service_id_fk` FOREIGN KEY (`service_id`) REFERENCES `calendar_dates` (`service_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `tr_shape_id_fk` FOREIGN KEY (`shape_id`) REFERENCES `shapes` (`shape_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `tr_service_id_fk` FOREIGN KEY (`service_id`) REFERENCES `calendar_dates` (`service_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

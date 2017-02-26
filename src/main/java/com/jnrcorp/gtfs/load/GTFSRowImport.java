@@ -11,7 +11,6 @@ import com.jnrcorp.gtfs.dao.model.Agency;
 import com.jnrcorp.gtfs.dao.model.CalendarDate;
 import com.jnrcorp.gtfs.dao.model.DAOBaseObject;
 import com.jnrcorp.gtfs.dao.model.Route;
-import com.jnrcorp.gtfs.dao.model.Shape;
 import com.jnrcorp.gtfs.dao.model.Stop;
 import com.jnrcorp.gtfs.dao.model.StopTime;
 import com.jnrcorp.gtfs.dao.model.Trip;
@@ -42,11 +41,6 @@ public class GTFSRowImport {
 		void setValue(Route route, String value);
 	}
 
-	private interface ShapeFieldSetter extends FieldSetter<Shape> {
-		@Override
-		void setValue(Shape shape, String value);
-	}
-
 	private interface StopFieldSetter extends FieldSetter<Stop> {
 		@Override
 		void setValue(Stop stop, String value);
@@ -65,7 +59,6 @@ public class GTFSRowImport {
 	private static Map<String, AgencyFieldSetter> agencyFieldsByColumnHeader = new HashMap<>();
 	private static Map<String, CalendarDateFieldSetter> calendarDateFieldsByColumnHeader = new HashMap<>();
 	private static Map<String, RouteFieldSetter> routeFieldsByColumnHeader = new HashMap<>();
-	private static Map<String, ShapeFieldSetter> shapeFieldsByColumnHeader = new HashMap<>();
 	private static Map<String, StopFieldSetter> stopFieldsByColumnHeader = new HashMap<>();
 	private static Map<String, StopTimeFieldSetter> stopTimeFieldsByColumnHeader = new HashMap<>();
 	private static Map<String, TripFieldSetter> tripFieldsByColumnHeader = new HashMap<>();
@@ -92,12 +85,6 @@ public class GTFSRowImport {
 		routeFieldsByColumnHeader.put(GTFSImportConstants.HEADER_ROUTE_URL, (route, value) -> route.setRouteUrl(value));
 		routeFieldsByColumnHeader.put(GTFSImportConstants.HEADER_ROUTE_COLOR, (route, value) -> route.setRouteColor(value));
 
-		shapeFieldsByColumnHeader.put(GTFSImportConstants.HEADER_SHAPE_ID, (shape, value) -> shape.setShapeId(Integer.valueOf(value)));
-		shapeFieldsByColumnHeader.put(GTFSImportConstants.HEADER_SHAPE_POINT_LATITUDE, (shape, value) -> shape.setShapePointLatitute(Double.valueOf(value)));
-		shapeFieldsByColumnHeader.put(GTFSImportConstants.HEADER_SHAPE_POINT_LONGITUDE, (shape, value) -> shape.setShapePointLongitude(Double.valueOf(value)));
-		shapeFieldsByColumnHeader.put(GTFSImportConstants.HEADER_SHAPE_POINT_SEQUENCE, (shape, value) -> shape.setShapePointSequence(Integer.valueOf(value)));
-		shapeFieldsByColumnHeader.put(GTFSImportConstants.HEADER_SHAPE_DISTANCE_TRAVELED, (shape, value) -> shape.setShapeDistanceTraveled(Double.valueOf(value)));
-
 		stopFieldsByColumnHeader.put(GTFSImportConstants.HEADER_STOP_ID, (stop, value) -> stop.setStopId(Integer.valueOf(value)));
 		stopFieldsByColumnHeader.put(GTFSImportConstants.HEADER_STOP_CODE, (stop, value) -> stop.setStopCode(value));
 		stopFieldsByColumnHeader.put(GTFSImportConstants.HEADER_STOP_NAME, (stop, value) -> stop.setStopName(value));
@@ -113,7 +100,6 @@ public class GTFSRowImport {
 		stopTimeFieldsByColumnHeader.put(GTFSImportConstants.HEADER_STOP_SEQUENCE, (stopTime, value) -> stopTime.setStopSequence(Integer.valueOf(value)));
 		stopTimeFieldsByColumnHeader.put(GTFSImportConstants.HEADER_PICKUP_TYPE, (stopTime, value) -> stopTime.setPickupType(PickupType.getById(value)));
 		stopTimeFieldsByColumnHeader.put(GTFSImportConstants.HEADER_DROP_OFF_TYPE, (stopTime, value) -> stopTime.setDropOffType(DropOffType.getById(value)));
-		stopTimeFieldsByColumnHeader.put(GTFSImportConstants.HEADER_SHAPE_DISTANCE_TRAVELED, (stopTime, value) -> stopTime.setShapeDistanceTraveled(Double.valueOf(value)));
 
 		tripFieldsByColumnHeader.put(GTFSImportConstants.HEADER_ROUTE_ID, (trip, value) -> trip.setRouteId(Integer.valueOf(value)));
 		tripFieldsByColumnHeader.put(GTFSImportConstants.HEADER_SERVICE_ID, (trip, value) -> trip.setServiceId(Integer.valueOf(value)));
@@ -121,12 +107,10 @@ public class GTFSRowImport {
 		tripFieldsByColumnHeader.put(GTFSImportConstants.HEADER_TRIP_HEADSIGN, (trip, value) -> trip.setTripHeadsign(value));
 		tripFieldsByColumnHeader.put(GTFSImportConstants.HEADER_DIRECTION_ID, (trip, value) -> trip.setDirectionId(DirectionId.getById(value)));
 		tripFieldsByColumnHeader.put(GTFSImportConstants.HEADER_BLOCK_ID, (trip, value) -> trip.setBlockId(value));
-		tripFieldsByColumnHeader.put(GTFSImportConstants.HEADER_SHAPE_ID, (trip, value) -> trip.setShapeId(Integer.valueOf(value)));
 
 		fieldSettersByClass.put(Agency.class, agencyFieldsByColumnHeader);
 		fieldSettersByClass.put(CalendarDate.class, calendarDateFieldsByColumnHeader);
 		fieldSettersByClass.put(Route.class, routeFieldsByColumnHeader);
-		fieldSettersByClass.put(Shape.class, shapeFieldsByColumnHeader);
 		fieldSettersByClass.put(Stop.class, stopFieldsByColumnHeader);
 		fieldSettersByClass.put(StopTime.class, stopTimeFieldsByColumnHeader);
 		fieldSettersByClass.put(Trip.class, tripFieldsByColumnHeader);

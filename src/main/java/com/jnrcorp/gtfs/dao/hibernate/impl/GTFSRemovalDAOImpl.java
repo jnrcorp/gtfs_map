@@ -12,7 +12,6 @@ import com.jnrcorp.gtfs.dao.hibernate.GTFSRemovalDAO;
 import com.jnrcorp.gtfs.dao.model.Agency;
 import com.jnrcorp.gtfs.dao.model.CalendarDate;
 import com.jnrcorp.gtfs.dao.model.Route;
-import com.jnrcorp.gtfs.dao.model.Shape;
 import com.jnrcorp.gtfs.dao.model.Stop;
 import com.jnrcorp.gtfs.dao.model.StopTime;
 import com.jnrcorp.gtfs.dao.model.Trip;
@@ -42,18 +41,6 @@ public class GTFSRemovalDAOImpl extends BaseDAOHibernate implements GTFSRemovalD
 		hql.append(" WHERE t.agencyId = :agencyId ");
 		hql.append(" AND t.routeId = r.routeId ");
 		hql.append(" AND cd.serviceId = t.serviceId ");
-		Query query = createQuery(hql.toString());
-		query.setParameter("agencyId", agencyId);
-		return list(query);
-	}
-
-	@Override
-	public List<Shape> getShapesByAgency(String agencyId) {
-		StringBuilder hql = new StringBuilder();
-		hql.append(" SELECT s FROM Shape s, Trip t, Route r ");
-		hql.append(" WHERE t.agencyId = :agencyId ");
-		hql.append(" AND t.routeId = r.routeId ");
-		hql.append(" AND t.shapeId = s.shapeId ");
 		Query query = createQuery(hql.toString());
 		query.setParameter("agencyId", agencyId);
 		return list(query);

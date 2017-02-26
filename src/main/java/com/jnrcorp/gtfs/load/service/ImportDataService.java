@@ -30,6 +30,7 @@ import com.jnrcorp.gtfs.exception.InvalidInputException;
 import com.jnrcorp.gtfs.load.CSVReader;
 import com.jnrcorp.gtfs.load.GTFSImportUtil;
 import com.jnrcorp.gtfs.load.GTFSRowImport;
+import com.jnrcorp.gtfs.load.GTFSRowImport.FieldSetter;
 import com.jnrcorp.gtfs.load.ImportFailure;
 import com.jnrcorp.gtfs.load.ImportHeaderMatchInfo;
 import com.jnrcorp.gtfs.util.StringUtil;
@@ -46,15 +47,14 @@ public class ImportDataService {
 
 	public <T> void removeData(Class<T> theClass) {
 		baseObjectDAO.removeAllWithoutLoading(theClass);
-//		List<T> objectsToRemove = baseObjectDAO.getAll(theClass);
-//		baseObjectDAO.removeAll(objectsToRemove);
 	}
 
+	@SuppressWarnings("unchecked")
 	private <T extends DAOBaseObject> void setFields(T object, Class<T> theClass, Map<String, String> objectValues) {
-		Map<String, ? extends GTFSRowImport.FieldSetter<?>> fieldsByColumnHeader = GTFSRowImport.fieldSettersByClass.get(theClass);
+		Map<String, ? extends FieldSetter<?>> fieldsByColumnHeader = GTFSRowImport.fieldSettersByClass.get(theClass);
 		for (String columnHeaderName : fieldsByColumnHeader.keySet()) {
 			if (objectValues.containsKey(columnHeaderName)) {
-				GTFSRowImport.FieldSetter<DAOBaseObject> fieldSetter = (GTFSRowImport.FieldSetter<DAOBaseObject>) fieldsByColumnHeader.get(columnHeaderName);
+				FieldSetter<DAOBaseObject> fieldSetter = (FieldSetter<DAOBaseObject>) fieldsByColumnHeader.get(columnHeaderName);
 				String consumerFieldValue = objectValues.get(columnHeaderName);
 				fieldSetter.setValue(object, consumerFieldValue);
 			}
@@ -74,11 +74,11 @@ public class ImportDataService {
 			LOGGER.warn("Patron file format error: file is empty ");
 			throw new ImportHeaderException("Error before parsing import file - Headers are empty: headers=" + columnNames);
 		}
-		ImportHeaderMatchInfo headerMatchInfo = compareHeader(columnNames);
-		if (!headerMatchInfo.isFoundMatch()) {
-			LOGGER.error("Error before parsing import file: !compareHeader: headers=" + columnNames + "; headerMatchInfo=" + headerMatchInfo.getCause());
-			throw new ImportHeaderException("Please verify the column headers in your import file: " + headerMatchInfo.getCause());
-		}
+//		ImportHeaderMatchInfo headerMatchInfo = compareHeader(columnNames);
+//		if (!headerMatchInfo.isFoundMatch()) {
+//			LOGGER.error("Error before parsing import file: !compareHeader: headers=" + columnNames + "; headerMatchInfo=" + headerMatchInfo.getCause());
+//			throw new ImportHeaderException("Please verify the column headers in your import file: " + headerMatchInfo.getCause());
+//		}
 
 		List<T> allObjects = new ArrayList<>();
 		String[] columnsValues = null;

@@ -17,11 +17,6 @@ public class GTFSImportConstants {
 	public static final String HEADER_ROUTE_TYPE = "route_type";
 	public static final String HEADER_ROUTE_URL = "route_url";
 	public static final String HEADER_ROUTE_COLOR = "route_color";
-	public static final String HEADER_SHAPE_ID = "shape_id";
-	public static final String HEADER_SHAPE_POINT_LATITUDE = "shape_pt_lat";
-	public static final String HEADER_SHAPE_POINT_LONGITUDE = "shape_pt_lon";
-	public static final String HEADER_SHAPE_POINT_SEQUENCE = "shape_pt_sequence";
-	public static final String HEADER_SHAPE_DISTANCE_TRAVELED = "shape_dist_traveled";
 	public static final String HEADER_STOP_ID = "stop_id";
 	public static final String HEADER_STOP_CODE = "stop_code";
 	public static final String HEADER_STOP_NAME = "stop_name";

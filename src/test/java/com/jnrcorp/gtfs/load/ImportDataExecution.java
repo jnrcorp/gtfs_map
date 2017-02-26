@@ -16,7 +16,6 @@ import com.jnrcorp.gtfs.BaseJunitTest;
 import com.jnrcorp.gtfs.dao.model.Agency;
 import com.jnrcorp.gtfs.dao.model.CalendarDate;
 import com.jnrcorp.gtfs.dao.model.Route;
-import com.jnrcorp.gtfs.dao.model.Shape;
 import com.jnrcorp.gtfs.dao.model.Stop;
 import com.jnrcorp.gtfs.dao.model.StopTime;
 import com.jnrcorp.gtfs.dao.model.TravelTime;
@@ -66,7 +65,6 @@ public class ImportDataExecution extends BaseJunitTest {
 		importDataService.removeData(StopTime.class);
 		importDataService.removeData(Stop.class);
 		importDataService.removeData(Trip.class);
-		importDataService.removeData(Shape.class);
 		importDataService.removeData(CalendarDate.class);
 		importDataService.removeData(Route.class);
 		importDataService.removeData(Agency.class);
@@ -82,8 +80,8 @@ public class ImportDataExecution extends BaseJunitTest {
 		LOGGER.info("Finished Rail 2");
 		importDataService.loadData(CalendarDate.class, gtfsIngestionFileRail3, "NJT");
 		LOGGER.info("Finished Rail 3");
-		importDataService.loadData(Shape.class, gtfsIngestionFileRail4, "NJT");
-		LOGGER.info("Finished Rail 4");
+//		importDataService.loadData(Shape.class, gtfsIngestionFileRail4, "NJT");
+//		LOGGER.info("Finished Rail 4");
 		importDataService.loadData(Trip.class, gtfsIngestionFileRail5, "NJT");
 		LOGGER.info("Finished Rail 5");
 		importDataService.loadData(Stop.class, gtfsIngestionFileRail6, "NJT");
@@ -96,8 +94,8 @@ public class ImportDataExecution extends BaseJunitTest {
 		LOGGER.info("Finished Bus 2");
 		importDataService.loadData(CalendarDate.class, gtfsIngestionFileBus3, "NJB");
 		LOGGER.info("Finished Bus 3");
-		importDataService.loadData(Shape.class, gtfsIngestionFileBus4, "NJB");
-		LOGGER.info("Finished Bus 4");
+//		importDataService.loadData(Shape.class, gtfsIngestionFileBus4, "NJB");
+//		LOGGER.info("Finished Bus 4");
 		importDataService.loadData(Trip.class, gtfsIngestionFileBus5, "NJB");
 		LOGGER.info("Finished Bus 5");
 		importDataService.loadData(Stop.class, gtfsIngestionFileBus6, "NJB");
